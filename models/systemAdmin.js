@@ -1,13 +1,19 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
     const systemAdminSchema = new mongoose.Schema({
-        uuid: {
-            type: String
+        staffTypeId: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'staffType',
+            required: [true, 'Please select System type']
         },
         username: {
             type: String,
-            required: [true, 'Please add username']
+            required: [true, 'Please add an email'],
+            unique: true,
+            match: [
+                /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/,
+                'Please add a valid email'
+            ]
         },
         password: {
             type: String,

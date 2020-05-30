@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 
 const staffSchema = new mongoose.Schema({
-    uuid: {
-        type: String
-    },
     staffTypeId: {
         type: mongoose.Schema.ObjectId,
         ref: 'staffType',

@@ -41,7 +41,7 @@ exports.addStaff = asyncHandler(async (req, res) => {
     });
 
     // Create user
-    User.create({
+    await User.create({
       name: firstName+' '+lastName,
       email,
       password,
@@ -98,7 +98,6 @@ exports.updateStaff = asyncHandler(async (req, res, next) => {
       };
       const salt = await bcrypt.genSalt(10);
       params.password = await bcrypt.hash(req.body.password, salt);
-      console.log("params: ", params);
       await User.updateOne({_id: user._id}, params);
     }
 
