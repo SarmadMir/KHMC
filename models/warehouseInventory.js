@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 
 const WarehouseInventorySchema = new mongoose.Schema({
-    uuid: {
-        type: String
-    },
     itemId: {
         type: mongoose.Schema.ObjectId,
         ref: 'Item',
