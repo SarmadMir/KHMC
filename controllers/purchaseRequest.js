@@ -29,7 +29,7 @@ exports.getPurchaseRequestItems = asyncHandler(async (req, res) => {
 });
 
 exports.addPurchaseRequest = asyncHandler(async (req, res) => {
-    const { _id, generatedBy, date, status, name, description,
+    const { _id, generatedBy, date, status, name, description,vendorId,
         currentQty, reqQty, comments } = req.body;
     const purchaseRequest = await PurchaseRequest.create({
         _id,
@@ -41,7 +41,8 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
         description,
         currentQty,
         reqQty,
-        comments
+        comments,
+        vendorId
     });
 
     res.status(200).json({ success: true, data: purchaseRequest });
