@@ -76,7 +76,7 @@ app.use('/api/purchaseorder', purchaseOrder);
 app.use('/api/receiveitem', receiveItem);
 app.use('/api/materialreceiving', materialReceiving);
 app.use('/api/shippingterm', shippingTerm);
-app.use('/api/accessLevel', accessLevel);
+app.use('/api/accesslevel', accessLevel);
 app.use(errorHandler);
 
 // Set static folder
