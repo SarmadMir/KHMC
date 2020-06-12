@@ -29,7 +29,7 @@ const WhInventory = require('../models/warehouseInventory');
     };
 
     exports.deleteWhInventory = (req, res, next) => {
-        const { _id } = req.body;
+        const { _id } = req.params;
 
         try{
             WhInventory.deleteOne({_id: _id}).then(function(response, err){
