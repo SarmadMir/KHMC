@@ -196,12 +196,11 @@ exports.getItems = asyncHandler(async (req, res) => {
 
 exports.getSearchedItems = asyncHandler(async (req, res) => {
   const items = await Item.find({
-    $or: [{ name: req.params.keyword }, { itemCode: req.params.keyword }],
+    $or: [{ name: {$regex: req.params.keyword, $options: 'i'} }, { itemCode: {$regex: req.params.keyword, $options: 'i'} }],
   });
   const data = {
     items,
   };
-
   res.status(200).json({ success: true, data: data });
 });
 

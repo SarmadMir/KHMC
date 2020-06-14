@@ -2,7 +2,7 @@ const WhInventory = require('../models/warehouseInventory');
 
     exports.getWhInventory = (req, res, next) => {
         try {
-            WhInventory.find().then(function(data, err){
+            WhInventory.find().populate('itemId').then(function(data, err){
                 if(err) throw err;
                 res.status(200).send({success:true, data: data , message: "Warehouse inventory fetched successfully" });
             })
@@ -29,7 +29,7 @@ const WhInventory = require('../models/warehouseInventory');
     };
 
     exports.deleteWhInventory = (req, res, next) => {
-        const { _id } = req.body;
+        const { _id } = req.params;
 
         try{
             WhInventory.deleteOne({_id: _id}).then(function(response, err){
