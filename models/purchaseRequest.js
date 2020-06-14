@@ -47,6 +47,9 @@ const PurchaseRequestSchema = new mongoose.Schema({
     orderType:{
         type: String,
     },
+    generated:{
+        type: String,
+    },
     createdAt: {
         type: Date,
         default: Date.now
