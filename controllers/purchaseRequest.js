@@ -106,10 +106,15 @@ exports.updatePurchaseRequest = asyncHandler(async (req, res, next) => {
     );
   }
 
+  if (req.body.committeeStatus === 'approved') {
+    req.body.status = 'in_progress';
+  }
+
   purchaseRequest = await PurchaseRequest.findOneAndUpdate(
     { _id: _id },
     req.body
   );
+
   // if (req.body.status == 'pending_recieving') {
   //   let purchaseOrder = await PurchaseOrder.findOne({
   //     status: 'pending_recieving',
