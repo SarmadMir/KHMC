@@ -6,7 +6,7 @@ const PurchaseOrderSchema = new mongoose.Schema({
     },
     purchaseRequestId:[{
         type: mongoose.Schema.ObjectId,
-        ref: 'purchaseRequest',
+        ref: 'PurchaseRequest',
     }],
     date: {
         type: Date,
