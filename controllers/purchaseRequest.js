@@ -50,7 +50,7 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     requestNo: uuidv4(),
     generated,
     generatedBy,
-    createdFor,
+    committeeStatus: 'to_do',
     status,
     comments,
     reason,
