@@ -38,6 +38,15 @@ const PurchaseRequestSchema = new mongoose.Schema({
             required: [true, 'Please add comments']
         }
     },
+    requesterName:{
+        type: String,
+    },
+    department:{
+        type: String,
+    },
+    orderType:{
+        type: String,
+    },
     createdAt: {
         type: Date,
         default: Date.now

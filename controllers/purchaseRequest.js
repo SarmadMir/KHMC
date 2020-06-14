@@ -27,7 +27,7 @@ exports.getPurchaseRequests = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, data: data });
 });
 exports.addPurchaseRequest = asyncHandler(async (req, res) => {
-    const { generatedBy, status,item, comments,reason,vendorId } = req.body;
+    const { generatedBy, status,item, comments,reason,vendorId,requesterName,department,orderType } = req.body;
     const purchaseRequest = await PurchaseRequest.create({
         requestNo: uuidv4(),
         generatedBy,
@@ -35,7 +35,10 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
         comments,
         reason,
         item,
-        vendorId
+        vendorId,
+        requesterName,
+        department,
+        orderType
     });
     // if(req.body.status == "Done")
     // {
