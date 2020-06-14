@@ -39,6 +39,10 @@ exports.getBusinessUnitLogs = asyncHandler(async (req, res) => {
 
   res.status(200).json({ success: true, data: buLogs });
 });
+exports.getHead = asyncHandler(async (req, res) => {
+  const head = await BusinessUnit.find({buHead: req.params._id});
+  res.status(200).json({ success: true, data: head });
+});
 
 exports.addBusinessUnit = asyncHandler(async (req, res) => {
     const { buName, description, division, buHead, status, updatedBy, reason } = req.body;
