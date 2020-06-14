@@ -100,22 +100,25 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
     }
 
     purchaseOrder = await PurchaseOrder.updateOne({_id: _id}, req.body);
-    if(req.body.status == "done")
+    if(req.body.status == "approved")
     {
-      const purchaseRequestVendors = await PurchaseRequest.aggregate([
-        {$match:{"status":"Done"}},
-        {$lookup:{from:'items',localField:'item.itemId',foreignField:'_id',as:'itemId'}},
-        {$unwind:"$itemId"},
-        {$match:{"itemId.vendorId":new mongoose.Types.ObjectId(req.body.vendorId)}},
-        {$project:{"requestNo":1,"item.reqQty":1,"itemId":1}}
-    ]);
-    var content = purchaseRequestVendors.reduce(function(a, b) {
+      const purchaseRequest =await PurchaseOrder.findOne({_id:_id}).populate('purchaseRequestId')
+      const itemMail = purchaseRequest.purchaseRequestId.populate('itemId').populate('vendorId')
+      const requestId = purchaseRequest.purchaseRequestId[0].populate('vendorId');
+      const vendorEmail = requestId.contactEmail
+    //   const purchaseRequestVendors = await PurchaseRequest.aggregate([
+    //     {$match:{"status":"Done"}},
+    //     {$lookup:{from:'items',localField:'item.itemId',foreignField:'_id',as:'itemId'}},
+    //     {$unwind:"$itemId"},
+    //     {$match:{"itemId.vendorId":new mongoose.Types.ObjectId(req.body.vendorId)}},
+    //     {$project:{"requestNo":1,"item.reqQty":1,"itemId":1}}
+    // ]);
+    var content = itemMail.reduce(function(a, b) {
       return a + '<tr><td>' + b.itemId.itemCode + '</a></td><td>' + b.itemId.name + '</td><td>' + b.item.reqQty + '</td></tr>';
        }, '');
-         const itemMail = await Item.findOne({_id:req.body.item.itemId}).populate('vendorId');
          var mailOptions = {
              from: 'abdulhannan.itsolution@gmail.com',
-             to: itemMail.vendorId.contactEmail,
+             to: vendorEmail,
              subject: 'Request for items',
              html: '<div><table><thead><tr><th>Item Code</th><th>Item Name</th><th>Quantity</th></tr></thead><tbody>' + 
              content + '</tbody></table></div>'
