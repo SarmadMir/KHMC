@@ -14,7 +14,9 @@ var transporter = nodemailer.createTransport({
   },
 });
 exports.getPurchaseOrders = asyncHandler(async (req, res) => {
-  const purchaseOrder = await PurchaseOrder.find().populate('vendorId');
+  const purchaseOrder = await PurchaseOrder.find()
+    .populate('vendorId')
+    .populate('purchaseRequestId');
   const vendor = await Vendor.find();
   const status = [
     { key: 'po_created', value: 'PO Created' },
