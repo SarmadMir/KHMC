@@ -12,7 +12,7 @@ const {
 
 const router = express.Router();
 
-router.get('getitem/:_id', getItem);
+router.get('/:_id', getItem);
 router.get('/getitems', getItems);
 router.get('/getsearcheditems/:keyword', getSearchedItems);
 router.post('/additem', validateParams([
