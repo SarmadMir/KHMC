@@ -22,16 +22,6 @@ router.post('/addreceiveitem', validateParams([
         param_key: 'itemName',
         required: true,
         type: 'string'
-    },
-    {
-        param_key: 'currentQty',
-        required: true,
-        type: 'string'
-    },
-    {
-        param_key: 'requiredQty',
-        required: true,
-        type: 'string'
     }
   ]), addReceiveItem);
 

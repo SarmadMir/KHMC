@@ -10,58 +10,75 @@ const ReceiveItemSchema = new mongoose.Schema({
         required: true
     },
     currentQty: {
-        type: String,
+        type: Number,
         required: true
     },
-    requiredQty: {
-        type: String,
+    requestedQty: {
+        type: Number,
         required: true
     },
+    // requiredQty: {
+    //     type: String,
+    //     required: true
+    // },
     receivedQty: {
-        type: String,
+        type: Number,
         required: true
     },
     bonusQty: {
-        type: String
+        type: Number
     },
     batchNumber: {
         type: String
+    },
+    lotNumber: {
+        type: String
+    },
+    expiryDate:{
+        type: Date
     },
     unit: {
         type: String
     },
     discount: {
-        type: String
+        type: Number
     },
-    uniyDiscount: {
-        type: String
+    unitDiscount: {
+        type: Number
     },
     discountAmount: {
-        type: String
+        type: Number
     },
     tax: {
-        type: String
+        type: Number
     },
     taxAmount: {
-        type: String
+        type: Number
     },
     finalUnitPrice: {
-        type: String
+        type: Number
     },
     subTotal: {
-        type: String
+        type: Number
+    },
+    discountAmount2: {
+        type: Number
     },
     totalPrice: {
-        type: String
+        type: Number
     },
     invoice: {
         type: String
     },
-    date: {
+    dateInvoice: {
         type: Date,
         default: Date.now
     },
-    comments: {
+    dateReceived: {
+        type: Date,
+        default: Date.now
+    },    
+    notes: {
         type: String
     },
     createdAt: {
