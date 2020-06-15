@@ -201,5 +201,5 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
   //     }
   //   });
   // }
-  res.status(200).json({ success: true, data: PurchaseOrder });
+  res.status(200).json({ success: true, data: purchaseOrder });
 });
