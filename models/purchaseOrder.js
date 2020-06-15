@@ -40,6 +40,9 @@ const PurchaseOrderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  sentAt: {
+    type: Date,
+  },
   updatedAt: {
     type: Date,
     default: Date.now,
