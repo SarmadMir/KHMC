@@ -3,11 +3,9 @@ const mongoose = require('mongoose');
 const MaterialReceivingSchema = new mongoose.Schema({
     itemCode: {
         type: String,
-        required: [true, 'Please add item code']
     },
     itemName: {
         type: String,
-        required: [true, 'Please add item name']
     },
     prId: {
         type: mongoose.Schema.ObjectId,

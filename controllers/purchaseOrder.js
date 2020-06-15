@@ -114,7 +114,6 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
   const { _id } = req.body;
 
   let purchaseOrder = await PurchaseOrder.findById(_id);
-
   if (!purchaseOrder) {
     return next(
       new ErrorResponse(`Purchase Order not found with id of ${_id}`, 404)
@@ -126,56 +125,31 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
     req.body.sentAT = Date.now();
 
     // Sending Email to Vendor
+    const purchaseRequest =await PurchaseOrder.findOne({_id:_id}).populate({
+      path : 'purchaseRequestId',
+      populate: [{
+          path : 'item.itemId',
+          }]
+  }).populate('vendorId');
+  const vendorEmail = purchaseRequest.vendorId.contactEmail
+  var content = purchaseRequest.purchaseRequestId.reduce(function(a, b) {
+    return a + '<tr><td>' + b.item.itemId.itemCode + '</a></td><td>' + b.item.itemId.name + '</td><td>' + b.item.reqQty + '</td></tr>';
+     }, '');
+       var mailOptions = {
+           from: 'abdulhannan.itsolution@gmail.com',
+           to: vendorEmail,
+           subject: 'Request for items',
+           html: '<div><table><thead><tr><th>Item Code</th><th>Item Name</th><th>Quantity</th></tr></thead><tbody>' + 
+           content + '</tbody></table></div>'
 
-    const purchaseRequestVendors = await PurchaseRequest.aggregate([
-      { $match: { status: 'Done' } },
-      {
-        $lookup: {
-          from: 'items',
-          localField: 'item.itemId',
-          foreignField: '_id',
-          as: 'itemId',
-        },
-      },
-      { $unwind: '$itemId' },
-      {
-        $match: {
-          'itemId.vendorId': new mongoose.Types.ObjectId(req.body.vendorId),
-        },
-      },
-      { $project: { requestNo: 1, 'item.reqQty': 1, itemId: 1 } },
-    ]);
-    var content = purchaseRequestVendors.reduce(function (a, b) {
-      return (
-        a +
-        '<tr><td>' +
-        b.itemId.itemCode +
-        '</a></td><td>' +
-        b.itemId.name +
-        '</td><td>' +
-        b.item.reqQty +
-        '</td></tr>'
-      );
-    }, '');
-    const itemMail = await Item.findOne({ _id: req.body.item.itemId }).populate(
-      'vendorId'
-    );
-    var mailOptions = {
-      from: 'abdulhannan.itsolution@gmail.com',
-      to: itemMail.vendorId.contactEmail,
-      subject: 'Request for items',
-      html:
-        '<div><table><thead><tr><th>Item Code</th><th>Item Name</th><th>Quantity</th></tr></thead><tbody>' +
-        content +
-        '</tbody></table></div>',
-    };
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
+         };
+         transporter.sendMail(mailOptions, function(error, info){
+           if (error) {
+             console.log(error);
+           } else {
+             console.log('Email sent: ' + info.response);
+           }
+         });
   }
   purchaseOrder = await PurchaseOrder.updateOne({ _id: _id }, req.body);
   // if (req.body.status == 'done') {
