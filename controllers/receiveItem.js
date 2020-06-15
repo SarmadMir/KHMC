@@ -14,29 +14,33 @@ exports.getReceiveItems = asyncHandler(async (req, res) => {
 });
 
 exports.addReceiveItem = asyncHandler(async (req, res) => {
-    const { itemCode, itemName, currentQty, requiredQty, receivedQty, bonusQty, batchNumber,
-        unit, discount, uniyDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
-        totalPrice, invoice, date, comments } = req.body;
+    const { itemCode, itemName, currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
+        expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
+        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes } = req.body;
     const receiveItem = await ReceiveItem.create({
         itemCode,
         itemName,
         currentQty,
-        requiredQty,
+        requestedQty,
         receivedQty,
+        bonusQty,
         batchNumber,
+        lotNumber,
+        expiryDate,
         unit,
         discount,
-        bonusQty,
-        uniyDiscount,
+        unitDiscount,
         discountAmount,
         tax,
         taxAmount,
         finalUnitPrice,
         subTotal,
+        discountAmount2,
         totalPrice,
         invoice,
-        date,
-        comments
+        dateInvoice,
+        dateReceived,
+        notes
     });
 
     res.status(200).json({ success: true, data: receiveItem });

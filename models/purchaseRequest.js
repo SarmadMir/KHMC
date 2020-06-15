@@ -27,7 +27,7 @@ const PurchaseRequestSchema = new mongoose.Schema({
   item: {
     itemId: {
       type: mongoose.Schema.ObjectId,
-      ref: 'item',
+      ref: 'Item',
     },
     currQty: {
       type: Number,
