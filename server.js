@@ -38,6 +38,7 @@ const receiveItem = require('./routes/receiveItem');
 const materialReceiving = require('./routes/materialReceiving');
 const shippingTerm = require('./routes/shippingTerm');
 const accessLevel = require('./routes/accessLevel');
+const account = require('./routes/account');
 const app = express();
 
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -77,6 +78,7 @@ app.use('/api/receiveitem', receiveItem);
 app.use('/api/materialreceiving', materialReceiving);
 app.use('/api/shippingterm', shippingTerm);
 app.use('/api/accesslevel', accessLevel);
+app.use('/api/account', account);
 app.use(errorHandler);
 
 // Set static folder
