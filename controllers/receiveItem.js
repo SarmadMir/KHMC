@@ -2,7 +2,9 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const ReceiveItem = require('../models/receiveItem');
-
+const MaterialReceiving = require('../models/materialReceiving');
+const WhInventory = require('../models/warehouseInventory');
+const Account = require('../models/accounts');
 exports.getReceiveItems = asyncHandler(async (req, res) => {
     const receiveItems = await ReceiveItem.find().populate('vendorId');
 
@@ -16,8 +18,8 @@ exports.getReceiveItems = asyncHandler(async (req, res) => {
 exports.addReceiveItem = asyncHandler(async (req, res) => {
     const { itemCode, itemName, currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
-        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes } = req.body;
-    const receiveItem = await ReceiveItem.create({
+        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,itemId,materialId } = req.body;
+    await ReceiveItem.create({
         itemCode,
         itemName,
         currentQty,
@@ -42,8 +44,23 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
         dateReceived,
         notes
     });
-
-    res.status(200).json({ success: true, data: receiveItem });
+    await WhInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
+    await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':itemId},{ $set: { 'prId.$.status': 'received' }},{new: true});
+    var count = 0;
+    for(let i = 0; i<mat.prId.length; i++)
+    {
+        if(mat.prId[i].status="received"){
+            count++;
+        }
+    }
+    if(count == mat.prId.length)
+    {
+        await Account.create({
+            mrId:materialId,
+            status:"pending",
+        })
+    }
+    res.status(200).json({ success: true});
 });
 
 exports.deleteReceiveItem = asyncHandler(async (req, res, next) => {
