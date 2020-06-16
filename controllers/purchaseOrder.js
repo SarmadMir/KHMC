@@ -92,18 +92,10 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Purchase Order not found with id of ${_id}`, 404)
     );
   }
-  purchaseOrder = await PurchaseOrder.findOneAndUpdate({ _id: _id }, req.body);
+
   if (req.body.committeeStatus === 'approved') {
-    req.body.status = 'po_sent';
+    req.body.status = 'items_in_transit';
     req.body.sentAT = Date.now();
-  //   const { prId, poId, vendorId, status, poSentDate } = req.body;
-    const Material = await MaterialRecieving.create({
-      prId : purchaseOrder.purchaseRequestId,
-      poId : purchaseOrder._id,
-      vendorId : purchaseOrder.vendorId,
-      status : "in_transit",
-      poSentDate : Date.now()
-  });
     // Sending Email to Vendor
 
     const purchaseRequest =await PurchaseOrder.findOne({_id:_id}).populate({
@@ -131,6 +123,17 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
              console.log('Email sent: ' + info.response);
            }
          });
+  }
+  purchaseOrder = await PurchaseOrder.findOneAndUpdate({ _id: _id }, req.body,{new: true});
+  if(purchaseOrder.status === "items_in_transit")
+  {
+    const { prId} = req.body;
+    await MaterialRecieving.create({
+      prId,
+      poId : purchaseOrder._id,
+      vendorId : purchaseOrder.vendorId,
+      status : "items_in_transit"
+  });
   }
   res.status(200).json({ success: true, data: purchaseOrder });
 });
