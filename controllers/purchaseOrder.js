@@ -95,7 +95,7 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
 
   if (req.body.committeeStatus === 'approved') {
     req.body.status = 'items_in_transit';
-    req.body.sentAT = Date.now();
+    req.body.sentAt = Date.now();
     // Sending Email to Vendor
 
     const purchaseRequest =await PurchaseOrder.findOne({_id:_id}).populate({
