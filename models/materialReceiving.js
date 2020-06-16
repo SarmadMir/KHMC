@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
 
 const MaterialReceivingSchema = new mongoose.Schema({
-    itemCode: {
-        type: String,
-    },
-    itemName: {
-        type: String,
-    },
-    prId: {
+    prId: [{
+        id:{
         type: mongoose.Schema.ObjectId,
         ref: 'PurchaseRequest'
     },
+    status:{
+        type: String,
+        default:"not recieved"
+    }
+    }
+    ],
     poId: {
         type: mongoose.Schema.ObjectId,
         ref: 'PurchaseOrder'
