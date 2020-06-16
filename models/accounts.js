@@ -6,6 +6,10 @@ const accountSchema = new mongoose.Schema(
         type: mongoose.Schema.ObjectId,
         ref: 'MaterialRequest'
     },
+    vendorId: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Vendor'
+  },
     status: {
       type: String,
     },
