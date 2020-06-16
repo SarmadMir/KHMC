@@ -4,7 +4,7 @@ const asyncHandler = require('../middleware/async');
 const ReceiveItem = require('../models/receiveItem');
 const MaterialReceiving = require('../models/materialReceiving');
 const WhInventory = require('../models/warehouseInventory');
-const Account = require('../models/accounts');
+const Account = require('../models/account');
 exports.getReceiveItems = asyncHandler(async (req, res) => {
     const receiveItems = await ReceiveItem.find().populate('vendorId');
 
