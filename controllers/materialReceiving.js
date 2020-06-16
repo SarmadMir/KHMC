@@ -17,7 +17,10 @@ exports.getMaterialReceivings = asyncHandler(async (req, res) => {
               }},{
             path:'vendorId'
         }]
-    }).populate('vendorId').populate('prId.id')
+    }).populate('vendorId').populate({
+        path:'prId.id',
+        populate:{path:'item.itemId'}
+    })
     const vendors = await Vendor.find();
     const purchaseRequests = await PurchaseRequest.find();
     const purchaseOrders = await PurchaseOrder.find();

@@ -6,6 +6,10 @@ const accountSchema = new mongoose.Schema(
         type: mongoose.Schema.ObjectId,
         ref: 'MaterialRequest'
     },
+    vendorId: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Vendor'
+  },
     status: {
       type: String,
     },
@@ -15,4 +19,4 @@ const accountSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('account', accountSchema);
+module.exports = mongoose.model('Account', accountSchema);
