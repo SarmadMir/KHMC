@@ -25,9 +25,6 @@ const MaterialReceivingSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please select Status']
     },
-    poSentDate: {
-        type: Date
-    },
     createdAt: {
         type: Date,
         default: Date.now
