@@ -16,12 +16,11 @@ exports.getReceiveItems = asyncHandler(async (req, res) => {
 });
 
 exports.addReceiveItem = asyncHandler(async (req, res) => {
-    const { itemCode, itemName, currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
+    const { itemId,currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
-        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,itemId,materialId } = req.body;
+        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,materialId } = req.body;
     await ReceiveItem.create({
-        itemCode,
-        itemName,
+        itemId,
         currentQty,
         requestedQty,
         receivedQty,
