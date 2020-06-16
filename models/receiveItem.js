@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
 
 const ReceiveItemSchema = new mongoose.Schema({
-    itemCode: {
-        type: String,
-        required: true
-    },
-    itemName: {
-        type: String,
-        required: true
+    itemId:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Item',
     },
     currentQty: {
         type: Number,
