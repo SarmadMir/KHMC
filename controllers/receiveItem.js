@@ -45,7 +45,6 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
     });
     await WhInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
    const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':prId},{ $set: { 'prId.$.status': 'received' }},{new: true});
-   res.status(200).json({ success: true, data:mat});
    var count = 0;
     for(let i = 0; i<mat.prId.length; i++)
     {
@@ -57,7 +56,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
     {
         await Account.create({
             mrId:materialId,
-            status:"pending",
+            status:"pending_approval_from_accounts",
             vendorId:vendorId
         })
     }
