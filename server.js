@@ -39,6 +39,7 @@ const materialReceiving = require('./routes/materialReceiving');
 const shippingTerm = require('./routes/shippingTerm');
 const accessLevel = require('./routes/accessLevel');
 const account = require('./routes/account');
+const replenishmentRequest = require('./routes/replenishmentRequest')
 const app = express();
 
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -49,6 +50,7 @@ app.use(cors());
 
 // Auth routes
 const { protect } = require('./middleware/auth');
+const replenishmentRequest = require('./models/replenishmentRequest');
 
 app.use(protect);
 
@@ -79,6 +81,7 @@ app.use('/api/materialreceiving', materialReceiving);
 app.use('/api/shippingterm', shippingTerm);
 app.use('/api/accesslevel', accessLevel);
 app.use('/api/account', account);
+app.use('/api/replenishmentRequest', replenishmentRequest);
 app.use(errorHandler);
 
 // Set static folder
