@@ -4,7 +4,7 @@ const accountSchema = new mongoose.Schema(
   {
     mrId: {
         type: mongoose.Schema.ObjectId,
-        ref: 'MaterialRequest'
+        ref: 'MaterialReceiving'
     },
     vendorId: {
       type: mongoose.Schema.ObjectId,
@@ -13,6 +13,9 @@ const accountSchema = new mongoose.Schema(
     status: {
       type: String,
     },
+    comments:{
+      type:String
+    }
   },
   {
     timestamps: true,
