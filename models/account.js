@@ -15,6 +15,9 @@ const accountSchema = new mongoose.Schema(
     },
     comments:{
       type:String
+    },
+    dateTimeRecieved:{
+      type:Date
     }
   },
   {
