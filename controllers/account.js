@@ -4,12 +4,32 @@ const asyncHandler = require('../middleware/async');
 const Account = require('../models/account');
 
 exports.getAccount = asyncHandler(async (req, res) => {
-  const account = await Account.find().populate('mrId').populate('vendorId');
+  const account = await Account.find().populate({
+    path : 'mrId',
+     populate: [{
+        path : 'poId',
+        populate : {
+          path : 'purchaseRequestId',
+          populate:{
+            path : 'item.itemId'
+          }
+          }}]
+  }).populate('vendorId');
   res.status(200).json({ success: true, data: account });
 });
 exports.getAccountById = asyncHandler(async (req, res) => {
   const account = await Account.findOne({_id:req.params._id})
-  .populate('mrId').populate('vendorId')
+  .populate({
+    path : 'mrId',
+     populate: [{
+        path : 'poId',
+        populate : {
+          path : 'purchaseRequestId',
+          populate:{
+            path : 'item.itemId'
+          }
+          }}]
+  }).populate('vendorId');
   res.status(200).json({ success: true, data: account });
 });
 
