@@ -40,7 +40,7 @@ const ReceiveItemSchema = new mongoose.Schema({
         type: Number
     },
     unitDiscount: {
-        type: Number
+        type: String
     },
     discountAmount: {
         type: Number
