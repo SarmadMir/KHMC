@@ -18,7 +18,7 @@ exports.getReceiveItems = asyncHandler(async (req, res) => {
 exports.addReceiveItem = asyncHandler(async (req, res) => {
     const { itemId,currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
-        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,materialId,vendorId } = req.body;
+        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,materialId,vendorId,prId } = req.body;
     await ReceiveItem.create({
         itemId,
         currentQty,
@@ -44,9 +44,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
         notes
     });
     await WhInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
-    console.log(materialId)
-    console.log(itemId)
-   const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':itemId},{ $set: { 'prId.$.status': 'received' }},{new: true});
+   const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':prId},{ $set: { 'prId.$.status': 'received' }},{new: true});
    res.status(200).json({ success: true, data:mat});
    var count = 0;
     for(let i = 0; i<mat.prId.length; i++)
