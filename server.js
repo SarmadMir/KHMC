@@ -50,7 +50,6 @@ app.use(cors());
 
 // Auth routes
 const { protect } = require('./middleware/auth');
-const replenishmentRequest = require('./models/replenishmentRequest');
 
 app.use(protect);
 
