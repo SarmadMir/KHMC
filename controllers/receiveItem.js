@@ -44,7 +44,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
         notes
     });
     await WhInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
-    await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':itemId},{ $set: { 'prId.$.status': 'received' }},{new: true});
+   const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':itemId},{ $set: { 'prId.$.status': 'received' }},{new: true});
     var count = 0;
     for(let i = 0; i<mat.prId.length; i++)
     {
