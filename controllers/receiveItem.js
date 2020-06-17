@@ -56,7 +56,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
     {
         await Account.create({
             mrId:materialId,
-            status:"pending",
+            status:"pending_approval_from_accounts",
             vendorId:vendorId
         })
     }
