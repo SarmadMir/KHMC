@@ -14,6 +14,9 @@ const replenishmentRequestSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    reason:{
+        type:String
+    },
     fuId: {
         type: mongoose.Schema.ObjectId,
         ref: 'functionalUnit'
