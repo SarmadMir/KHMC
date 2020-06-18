@@ -4,12 +4,18 @@ const replenishmentRequestSchema = new mongoose.Schema({
     requestNo: {
         type: String
     },
+    generated: {
+        type: String
+    },
     generatedBy: {
         type: String
     },
     dateGenerated: {
         type: Date,
         default: Date.now
+    },
+    reason:{
+        type:String
     },
     fuId: {
         type: mongoose.Schema.ObjectId,
