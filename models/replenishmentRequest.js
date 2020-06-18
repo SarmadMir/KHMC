@@ -4,6 +4,9 @@ const replenishmentRequestSchema = new mongoose.Schema({
     requestNo: {
         type: String
     },
+    generated: {
+        type: String
+    },
     generatedBy: {
         type: String
     },

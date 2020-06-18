@@ -12,10 +12,11 @@ exports.getReplenishmentRequestsById = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
 exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
-    const { generatedBy,dateGenerated,fuId,comments,itemId,currentQty,requestedQty,recieptUnit,
+    const { generated,generatedBy,dateGenerated,fuId,comments,itemId,currentQty,requestedQty,recieptUnit,
             issueUnit,fuItemCost,description,status} = req.body;
     await ReplenishmentRequest.create({
         requestNo: uuidv4(),
+        generated,
         generatedBy,
         dateGenerated,
         fuId,
