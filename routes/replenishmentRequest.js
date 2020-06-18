@@ -1,7 +1,9 @@
 const express = require('express');
 const {
-    getReplenishmentRequests,
-    getReplenishmentRequestsById,
+    getReplenishmentRequestsFU,
+    getReplenishmentRequestsByIdFU,
+    getReplenishmentRequestsBU,
+    getReplenishmentRequestsByIdBU,
     addReplenishmentRequest,
     deleteReplenishmentRequest,
     updateReplenishmentRequest,
@@ -10,8 +12,10 @@ const {
 const router = express.Router();
 
 
-router.get('/getreplenishmentrequests', getReplenishmentRequests);
-router.get('/getreplenishmentrequests/:_id', getReplenishmentRequestsById);
+router.get('/getreplenishmentrequestsFU', getReplenishmentRequestsFU);
+router.get('/getreplenishmentrequestsFU/:_id', getReplenishmentRequestsByIdFU);
+router.get('/getreplenishmentrequestsBU', getReplenishmentRequestsBU);
+router.get('/getreplenishmentrequestsBU/:_id', getReplenishmentRequestsByIdBU);
 router.post('/addreplenishmentrequest', addReplenishmentRequest);
 router.delete('/deletereceiveitem/:_id', deleteReplenishmentRequest);
 router.put('/updatereceiveitem', updateReplenishmentRequest);
