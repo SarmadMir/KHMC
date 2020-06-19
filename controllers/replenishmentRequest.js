@@ -6,6 +6,7 @@ const ReplenishmentRequest = require('../models/replenishmentRequest');
 const WHInventory = require('../models/warehouseInventory');
 const FUInventory = require('../models/fuInventory');
 const BUInventory = require('../models/buInventory');
+const PurchaseRequest = require('../models/purchaseRequest');
 exports.getReplenishmentRequestsFU = asyncHandler(async (req, res) => {
     const replenishmentRequest = await ReplenishmentRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId');    
     res.status(200).json({ success: true, data: replenishmentRequest });
@@ -76,16 +77,90 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
     replenishmentRequest = await ReplenishmentRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
     if(req.body.status=="approved")
     {
+        if(req.body.secondStatus == "fullfilled")
+        {       
         if((req.body.to=="Warehouse") && (req.body.from=="FU"))
         {
-            await FUInventory.updateOne({fuId: req.body.fuId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
-            await WHInventory.updateOne({itemId: req.body.itemId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }})
+            const wh = await WHInventory.findOne({itemId: req.body.itemId})
+            if(wh.qty>=req.body.requestedQty)
+            {
+                await FUInventory.updateOne({fuId: req.body.fuId, itemId: req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
+               const pr = await WHInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }},{new:true}).populate('itemId')
+                // if(pr.qty<=pr.itemId.reorderLevel)
+                // {
+                //     await PurchaseRequest.create({
+                //         requestNo: uuidv4(),
+                //         generated:'System',
+                //         generatedBy:'System',
+                //         committeeStatus: 'to_do',
+                //         status:'to_do',
+                //         comments,
+                //         reason,
+                //         item,
+                //         vendorId,
+                //         requesterName,
+                //         department,
+                //         orderType,
+                //       });
+                // }
+            }
+            else{
+                req.body.status = "out_of_stock"
+                req.body.secondStatus = "out_of_stock"
+            }
         }
         else if((req.body.to=="FU") && (req.body.from=="BU"))
         {
-            await BUInventory.updateOne({buId: req.body.buId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
-            await FUInventory.updateOne({itemId: req.body.itemId,_id:req.body.fuId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }})
-        }
+            const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:req.body.fuId})
+            if(fu.qty>=req.body.requestedQty)
+            {
+                await BUInventory.updateOne({buId: req.body.buId, itemId:req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
+                const fui = await FUInventory.findOneAndUpdate({itemId: req.body.itemId,fuId:req.body.fuId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }},{new:true}).populate('itemId')
+                // if(fui.qty<=fui.itemId.reorderLevel)
+                // {
+                //     await ReplenishmentRequest.create({
+                //         requestNo: uuidv4(),
+                //         generated:'System',
+                //         generatedBy:'System',
+                //         dateGenerated:Date.now(),
+                //         reason,
+                //         fuId:req.body.fuId,
+                //         buId:req.body.buId,
+                //         to:'FU',
+                //         from:'BU',
+                //         comments,
+                //         itemId:req.body.itemId,
+                //         currentQty:fui.qty,
+                //         requestedQty,
+                //         recieptUnit,
+                //         issueUnit,
+                //         fuItemCost,
+                //         description,
+                //         status:'pending'
+                //     });
+                // }
+            }
+            else{
+                req.body.status = "out_of_stock"
+                req.body.secondStatus = "out_of_stock"
+            }
+
+        } 
+    }
     }
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
+exports.getCurrentItemQuantityFU = asyncHandler(async (req, res) => {
+    const fuInventory = await FUInventory.findOne(
+      { itemId: req.body.itemId,fuId:req.body.fuId },
+      { qty: 1 }
+    );
+    res.status(200).json({ success: true, data: fuInventory });
+  });
+  exports.getCurrentItemQuantityBU = asyncHandler(async (req, res) => {
+    const buInventory = await BUInventory.findOne(
+      { itemId: req.body.itemId,buId:req.body.buId },
+      { qty: 1 }
+    );
+    res.status(200).json({ success: true, data: buInventory });
+  });

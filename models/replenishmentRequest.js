@@ -59,6 +59,9 @@ const replenishmentRequestSchema = new mongoose.Schema({
     status: {
         type: String
     },
+    secondStatus:{
+        type:String
+    },
     commentNote:{
         type:String
     },
