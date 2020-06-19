@@ -20,7 +20,7 @@ router.get('/getreplenishmentrequestsFU/:_id', getReplenishmentRequestsByIdFU);
 router.get('/getreplenishmentrequestsBU', getReplenishmentRequestsBU);
 router.get('/getreplenishmentrequestsBU/:_id', getReplenishmentRequestsByIdBU);
 router.post('/addreplenishmentrequest', addReplenishmentRequest);
-router.delete('/deletereceiveitem/:_id', deleteReplenishmentRequest);
-router.put('/updatereceiveitem', updateReplenishmentRequest);
+router.delete('/deletereplenishmentrequest/:_id', deleteReplenishmentRequest);
+router.put('/updatereplenishmentrequest', updateReplenishmentRequest);
 
 module.exports = router;
