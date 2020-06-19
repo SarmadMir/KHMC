@@ -25,7 +25,7 @@ exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
 });
 exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,reason,fuId,buId,to,from,comments,itemId,currentQty,requestedQty,recieptUnit,
-            issueUnit,fuItemCost,description,status,secondStatus} = req.body;
+            issueUnit,fuItemCost,description,status,secondStatus,approvedBy} = req.body;
     await ReplenishmentRequest.create({
         requestNo: uuidv4(),
         generated,
@@ -45,7 +45,8 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
         fuItemCost,
         description,
         status,
-        secondStatus
+        secondStatus,
+        approvedBy
     });
     res.status(200).json({ success: true });
 });
