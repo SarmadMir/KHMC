@@ -29,23 +29,31 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
         if((req.body.to=="Warehouse") && (req.body.from=="FU"))
         {
             const wh = await WHInventory.findOne({itemId: req.body.itemId})
-            if(wh.qty>=req.body.requestedQty)
+            if(wh.qty == 0)
             {
-                req.body.secondStatus = "Can be fullfilled"
+                req.body.secondStatus = "Cannot be fulfilled"                
             }
-            else{
-                req.body.secondStatus = "Cannot be fullfilled"
+            else if ((wh.qty<req.body.requestedQty)&&(wh.qty>0)){
+                req.body.secondStatus = "Can be partialy fulfilled"
+            }
+            else if(wh.qty>=req.body.requestedQty)
+            {
+                req.body.secondStatus = "Can be fulfilled"
             }
         }
         else if((req.body.to=="FU") && (req.body.from=="BU"))
         {
             const fu = FUInventory.findOne({itemId: req.body.itemId,fuId:req.body.fuId})
-            if(fu.qty>=req.body.requestedQty)
+            if(fu.qty == 0)
             {
-                req.body.secondStatus = "Can be fullfilled"
+                req.body.secondStatus = "Cannot be fulfilled"                
             }
-            else{
-                req.body.secondStatus = "Cannot be fullfilled"
+            else if ((fu.qty<req.body.requestedQty)&&(wh.qty>0)){
+                req.body.secondStatus = "Can be partialy fulfilled"
+            }
+            else if(fu.qty>=req.body.requestedQty)
+            {
+                req.body.secondStatus = "Can be fulfilled"
             }
         }
     await ReplenishmentRequest.create({
