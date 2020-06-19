@@ -37,6 +37,17 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
                 req.body.secondStatus = "Cannot be fullfilled"
             }
         }
+        else if((req.body.to=="FU") && (req.body.from=="BU"))
+        {
+            const fu = FUInventory.findOne({itemId: req.body.itemId,fuId:req.body.fuId})
+            if(fu.qty>=req.body.requestedQty)
+            {
+                req.body.secondStatus = "Can be fullfilled"
+            }
+            else{
+                req.body.secondStatus = "Cannot be fullfilled"
+            }
+        }
     await ReplenishmentRequest.create({
         requestNo: uuidv4(),
         generated,
@@ -88,17 +99,12 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
     }
 
     replenishmentRequest = await ReplenishmentRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
-    if(req.body.status=="approved")
+    if(req.body.status=="Received")
     {
-        if(req.body.secondStatus == "fullfilled")
-        {       
         if((req.body.to=="Warehouse") && (req.body.from=="FU"))
         {
-            const wh = await WHInventory.findOne({itemId: req.body.itemId})
-            if(wh.qty>=req.body.requestedQty)
-            {
-                await FUInventory.updateOne({fuId: req.body.fuId, itemId: req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
-               const pr = await WHInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }},{new:true}).populate('itemId')
+            await FUInventory.updateOne({fuId: req.body.fuId, itemId: req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
+            const pr = await WHInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }},{new:true}).populate('itemId')
                 // if(pr.qty<=pr.itemId.reorderLevel)
                 // {
                 //     await PurchaseRequest.create({
@@ -116,18 +122,11 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
                 //         orderType,
                 //       });
                 // }
-            }
-            else{
-                req.body.status = "out_of_stock"
-                req.body.secondStatus = "out_of_stock"
-            }
+
         }
         else if((req.body.to=="FU") && (req.body.from=="BU"))
         {
-            const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:req.body.fuId})
-            if(fu.qty>=req.body.requestedQty)
-            {
-                await BUInventory.updateOne({buId: req.body.buId, itemId:req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
+               await BUInventory.updateOne({buId: req.body.buId, itemId:req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
                 const fui = await FUInventory.findOneAndUpdate({itemId: req.body.itemId,fuId:req.body.fuId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }},{new:true}).populate('itemId')
                 // if(fui.qty<=fui.itemId.reorderLevel)
                 // {
@@ -152,14 +151,7 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
                 //         status:'pending'
                 //     });
                 // }
-            }
-            else{
-                req.body.status = "out_of_stock"
-                req.body.secondStatus = "out_of_stock"
-            }
-
         } 
-    }
     }
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
