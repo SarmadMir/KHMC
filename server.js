@@ -139,6 +139,6 @@ function sendevery5seconds() {
 // | | hour
 // | minute
 // second ( optional )
-cron.schedule('10 * * * *', function () {
-  console.log('running a task every 10 minutes');
-});
+// cron.schedule('10 * * * *', function () {
+//   console.log('running a task every 10 minutes');
+// });
