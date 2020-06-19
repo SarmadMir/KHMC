@@ -62,6 +62,10 @@ const replenishmentRequestSchema = new mongoose.Schema({
     secondStatus:{
         type:String
     },
+    approvedBy:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'staff'
+    },
     commentNote:{
         type:String
     },

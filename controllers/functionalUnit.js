@@ -109,3 +109,7 @@ exports.updateFunctionalUnit = asyncHandler(async (req, res, next) => {
   functionalUnit = await FunctionalUnit.updateOne({_id: _id}, req.body);
   res.status(200).json({ success: true, data: functionalUnit });
 });
+exports.getHead = asyncHandler(async (req, res) => {
+  const head = await FunctionalUnit.find({fuHead: req.params._id});
+  res.status(200).json({ success: true, data: head });
+});
