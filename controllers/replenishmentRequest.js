@@ -31,10 +31,10 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
             const wh = await WHInventory.findOne({itemId: req.body.itemId})
             if(wh.qty>=req.body.requestedQty)
             {
-                req.body.secondStatus == "Can be fullfilled"
+                req.body.secondStatus = "Can be fullfilled"
             }
             else{
-                req.body.secondStatus == "Cannot be fullfilled"
+                req.body.secondStatus = "Cannot be fullfilled"
             }
         }
     await ReplenishmentRequest.create({
@@ -56,7 +56,7 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
         fuItemCost,
         description,
         status,
-        secondStatus,
+        secondStatus:req.body.secondStatus,
         approvedBy
     });
     res.status(200).json({ success: true });
