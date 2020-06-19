@@ -115,7 +115,30 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
             if(fu.qty>=req.body.requestedQty)
             {
                 await BUInventory.updateOne({buId: req.body.buId, itemId:req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
-                await FUInventory.updateOne({itemId: req.body.itemId,fuId:req.body.fuId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }})
+                const fui = await FUInventory.findOneAndUpdate({itemId: req.body.itemId,fuId:req.body.fuId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }},{new:true}).populate('itemId')
+                // if(fui.qty<=fui.itemId.reorderLevel)
+                // {
+                //     await ReplenishmentRequest.create({
+                //         requestNo: uuidv4(),
+                //         generated:'System',
+                //         generatedBy:'System',
+                //         dateGenerated:Date.now(),
+                //         reason,
+                //         fuId:req.body.fuId,
+                //         buId:req.body.buId,
+                //         to:'FU',
+                //         from:'BU',
+                //         comments,
+                //         itemId:req.body.itemId,
+                //         currentQty:fui.qty,
+                //         requestedQty,
+                //         recieptUnit,
+                //         issueUnit,
+                //         fuItemCost,
+                //         description,
+                //         status:'pending'
+                //     });
+                // }
             }
             else{
                 req.body.status = "out_of_stock"
