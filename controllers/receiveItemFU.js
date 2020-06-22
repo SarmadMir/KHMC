@@ -4,6 +4,7 @@ const asyncHandler = require('../middleware/async');
 const ReceiveItemFU = require('../models/receiveItemFU');
 const FUInventory = require('../models/fuInventory');
 const ReplenishmentRequest = require('../models/replenishmentRequest');
+const WHInventory = require('../models/warehouseInventory');
 exports.getReceiveItemsFU = asyncHandler(async (req, res) => {
     const receiveItems = await ReceiveItemFU.find().populate('vendorId');
     const data = {
@@ -40,9 +41,9 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
         dateReceived,
         notes
     });
-    if((req.body.replensihmentRequestStatus=="Recieved")||(req.body.replensihmentRequestStatus=="Partially Recieved"))
+    if((req.body.replensihmentRequestStatus=="Received")||(req.body.replensihmentRequestStatus=="Partially Received"))
     {
-            await ReplenishmentRequest.findOneAndUpdate({_id: replensihmentRequestId},{ $set: { status:req.body.replensihmentRequestStatus }},{new:true});
+            await ReplenishmentRequest.findOneAndUpdate({_id: replensihmentRequestId},{ $set: { status:req.body.replensihmentRequestStatus,secondStatus:req.body.replensihmentRequestStatus }},{new:true});
             await FUInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
             const pr = await WHInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: currentQty-receivedQty }},{new:true}).populate('itemId')
             if(pr.qty<=pr.itemId.reorderLevel)
