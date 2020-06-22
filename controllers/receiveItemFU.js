@@ -40,7 +40,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
         dateReceived,
         notes
     });
-    if(req.body.replensihmentRequestStatus=="Recieved")
+    if((req.body.replensihmentRequestStatus=="Recieved")||(req.body.replensihmentRequestStatus=="Partially Recieved"))
     {
             await ReplenishmentRequest.findOneAndUpdate({_id: replensihmentRequestId},{ $set: { status:req.body.replensihmentRequestStatus }},{new:true});
             await FUInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
