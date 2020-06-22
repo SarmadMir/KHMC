@@ -26,14 +26,14 @@ exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
 });
 exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,reason,fuId,buId,to,from,comments,itemId,currentQty,requestedQty,recieptUnit,
-            issueUnit,fuItemCost,description,status,secondStatus,approvedBy} = req.body;
+            issueUnit,fuItemCost,description,status,warehouseStatus,approvedBy} = req.body;
         if((req.body.to=="Warehouse") && (req.body.from=="FU"))
         {
             const wh = await WHInventory.findOne({itemId: req.body.itemId})
-            if(wh.qty == 0)
+            if(wh.qty<req.body.requestedQty)
             {
-                req.body.secondStatus = "Cannot be fulfilled"
-                const i =await Item.findOne({_id:req.body.id}) 
+                req.body.warehouseStatus = "Cannot be fulfilled"
+                const i =await Item.findOne({_id:req.body.itemId}) 
                 var item={
                     itemId:req.body.itemId,
                     currQty:0,
@@ -56,30 +56,11 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
                         requesterName:'System',
                         department:'System',
                         orderType:'System',
-                      });           
-                
+                      });                           
             }
-            else if ((wh.qty<req.body.requestedQty)&&(wh.qty>0)){
-                req.body.secondStatus = "Can be partialy fulfilled"
-            }
-            else if(wh.qty>=req.body.requestedQty)
+            else
             {
-                req.body.secondStatus = "Can be fulfilled"
-            }
-        }
-        else if((req.body.to=="FU") && (req.body.from=="BU"))
-        {
-            const fu = FUInventory.findOne({itemId: req.body.itemId,fuId:req.body.fuId})
-            if(fu.qty == 0)
-            {
-                req.body.secondStatus = "Cannot be fulfilled"                
-            }
-            else if ((fu.qty<req.body.requestedQty)&&(wh.qty>0)){
-                req.body.secondStatus = "Can be partialy fulfilled"
-            }
-            else if(fu.qty>=req.body.requestedQty)
-            {
-                req.body.secondStatus = "Can be fulfilled"
+                req.body.warehouseStatus = "Can be fulfilled"
             }
         }
     await ReplenishmentRequest.create({
@@ -101,7 +82,7 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
         fuItemCost,
         description,
         status,
-        secondStatus:req.body.secondStatus,
+        warehouseStatus:req.body.warehouseStatus,
         approvedBy
     });
     res.status(200).json({ success: true });
@@ -133,59 +114,40 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
     }
 
     replenishmentRequest = await ReplenishmentRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
-    if(req.body.status=="Received")
+    if((req.body.status=="Recieved") && (req.body.warehouseStatus == "Completed"))
     {
         if((req.body.to=="Warehouse") && (req.body.from=="FU"))
         {
             await FUInventory.updateOne({fuId: req.body.fuId, itemId: req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
             const pr = await WHInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }},{new:true}).populate('itemId')
-                // if(pr.qty<=pr.itemId.reorderLevel)
-                // {
-                //     await PurchaseRequest.create({
-                //         requestNo: uuidv4(),
-                //         generated:'System',
-                //         generatedBy:'System',
-                //         committeeStatus: 'to_do',
-                //         status:'to_do',
-                //         comments,
-                //         reason,
-                //         item,
-                //         vendorId,
-                //         requesterName,
-                //         department,
-                //         orderType,
-                //       });
-                // }
-
+            if(pr.qty<=pr.itemId.reorderLevel)
+            {
+            const j =await Item.findOne({_id:req.body.itemId}) 
+            var item={
+                itemId:req.body.itemId,
+                currQty:0,
+                reqQty:100,
+                comments:'System',
+                name:j.name,
+                description:j.description,
+                itemCode:j.itemCode
+            }
+                await PurchaseRequest.create({
+                    requestNo: uuidv4(),
+                    generated:'System',
+                    generatedBy:'System',
+                    committeeStatus: 'to_do',
+                    status:'to_do',
+                    comments:'System',
+                    reason:'System',
+                    item,
+                    vendorId:j.vendorId,
+                    requesterName:'System',
+                    department:'System',
+                    orderType:'System',
+                  });
         }
-        else if((req.body.to=="FU") && (req.body.from=="BU"))
-        {
-               await BUInventory.updateOne({buId: req.body.buId, itemId:req.body.itemId}, { $set: { qty: req.body.currentQty+req.body.requestedQty }})
-                const fui = await FUInventory.findOneAndUpdate({itemId: req.body.itemId,fuId:req.body.fuId}, { $set: { qty: req.body.currentQty-req.body.requestedQty }},{new:true}).populate('itemId')
-                // if(fui.qty<=fui.itemId.reorderLevel)
-                // {
-                //     await ReplenishmentRequest.create({
-                //         requestNo: uuidv4(),
-                //         generated:'System',
-                //         generatedBy:'System',
-                //         dateGenerated:Date.now(),
-                //         reason,
-                //         fuId:req.body.fuId,
-                //         buId:req.body.buId,
-                //         to:'FU',
-                //         from:'BU',
-                //         comments,
-                //         itemId:req.body.itemId,
-                //         currentQty:fui.qty,
-                //         requestedQty,
-                //         recieptUnit,
-                //         issueUnit,
-                //         fuItemCost,
-                //         description,
-                //         status:'pending'
-                //     });
-                // }
-        } 
+    }
     }
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
