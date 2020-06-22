@@ -16,7 +16,7 @@ exports.getReceiveItemsFU = asyncHandler(async (req, res) => {
 exports.addReceiveItemFU = asyncHandler(async (req, res) => {
     const { itemId,currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
-        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,replensihmentRequestId,replensihmentRequestStatus } = req.body;
+        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,replensihmentRequestId,replensihmentRequestStatus,fuId } = req.body;
     await ReceiveItemFU.create({
         itemId,
         currentQty,
@@ -44,35 +44,37 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
     if((req.body.replensihmentRequestStatus=="Received")||(req.body.replensihmentRequestStatus=="Partially Received"))
     {
             await ReplenishmentRequest.findOneAndUpdate({_id: replensihmentRequestId},{ $set: { status:req.body.replensihmentRequestStatus,secondStatus:req.body.replensihmentRequestStatus }},{new:true});
-            await FUInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
-            const pr = await WHInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: currentQty-receivedQty }},{new:true}).populate('itemId')
-            if(pr.qty<=pr.itemId.reorderLevel)
-            {
-            const j =await Item.findOne({_id:req.body.itemId}) 
-            var item={
-                itemId:req.body.itemId,
-                currQty:0,
-                reqQty:100,
-                comments:'System',
-                name:j.name,
-                description:j.description,
-                itemCode:j.itemCode
-            }
-                await PurchaseRequest.create({
-                    requestNo: uuidv4(),
-                    generated:'System',
-                    generatedBy:'System',
-                    committeeStatus: 'to_do',
-                    status:'to_do',
-                    comments:'System',
-                    reason:'System',
-                    item,
-                    vendorId:j.vendorId,
-                    requesterName:'System',
-                    department:'System',
-                    orderType:'System',
-                  });
-        }
+            const fu = await FUInventory.findOne({itemId: itemId})
+            const wh = await WHInventory.findOne({itemId: itemId})
+            await FUInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: fu.qty+receivedQty }},{new:true})
+            const pr = await WHInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: wh.qty-receivedQty }},{new:true}).populate('itemId')
+        //     if(pr.qty<=pr.itemId.reorderLevel)
+        //     {
+        //     const j =await Item.findOne({_id:req.body.itemId}) 
+        //     var item={
+        //         itemId:req.body.itemId,
+        //         currQty:0,
+        //         reqQty:100,
+        //         comments:'System',
+        //         name:j.name,
+        //         description:j.description,
+        //         itemCode:j.itemCode
+        //     }
+        //         await PurchaseRequest.create({
+        //             requestNo: uuidv4(),
+        //             generated:'System',
+        //             generatedBy:'System',
+        //             committeeStatus: 'to_do',
+        //             status:'to_do',
+        //             comments:'System',
+        //             reason:'System',
+        //             item,
+        //             vendorId:j.vendorId,
+        //             requesterName:'System',
+        //             department:'System',
+        //             orderType:'System',
+        //           });
+        // }
     }
 
     res.status(200).json({ success: true});
