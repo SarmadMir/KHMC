@@ -7,6 +7,7 @@ const WHInventory = require('../models/warehouseInventory');
 const FUInventory = require('../models/fuInventory');
 const BUInventory = require('../models/buInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
+const Item = require('../models/item');
 exports.getReplenishmentRequestsFU = asyncHandler(async (req, res) => {
     const replenishmentRequest = await ReplenishmentRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId').populate('approvedBy');    
     res.status(200).json({ success: true, data: replenishmentRequest });
@@ -31,7 +32,32 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
             const wh = await WHInventory.findOne({itemId: req.body.itemId})
             if(wh.qty == 0)
             {
-                req.body.secondStatus = "Cannot be fulfilled"                
+                req.body.secondStatus = "Cannot be fulfilled"
+                const i =await Item.findOne({_id:req.body.id}) 
+                var item={
+                    itemId:req.body.itemId,
+                    currQty:0,
+                    reqQty:100,
+                    comments:'System',
+                    name:i.name,
+                    description:i.description,
+                    itemCode:i.itemCode
+                }
+                    await PurchaseRequest.create({
+                        requestNo: uuidv4(),
+                        generated:'System',
+                        generatedBy:'System',
+                        committeeStatus: 'to_do',
+                        status:'to_do',
+                        comments:'System',
+                        reason:'System',
+                        item,
+                        vendorId:i.vendorId,
+                        requesterName:'System',
+                        department:'System',
+                        orderType:'System',
+                      });           
+                
             }
             else if ((wh.qty<req.body.requestedQty)&&(wh.qty>0)){
                 req.body.secondStatus = "Can be partialy fulfilled"
