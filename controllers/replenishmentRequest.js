@@ -26,13 +26,13 @@ exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
 });
 exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,reason,fuId,buId,to,from,comments,itemId,currentQty,requestedQty,recieptUnit,
-            issueUnit,fuItemCost,description,status,warehouseStatus,approvedBy} = req.body;
+            issueUnit,fuItemCost,description,status,secondStatus,approvedBy} = req.body;
         if((req.body.to=="Warehouse") && (req.body.from=="FU"))
         {
             const wh = await WHInventory.findOne({itemId: req.body.itemId})
             if(wh.qty<req.body.requestedQty)
             {
-                req.body.warehouseStatus = "Cannot be fulfilled"
+                req.body.secondStatus = "Cannot be fulfilled"
                 const i =await Item.findOne({_id:req.body.itemId}) 
                 var item={
                     itemId:req.body.itemId,
@@ -60,7 +60,7 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
             }
             else
             {
-                req.body.warehouseStatus = "Can be fulfilled"
+                req.body.secondStatus = "Can be fulfilled"
             }
         }
     await ReplenishmentRequest.create({
@@ -82,7 +82,7 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
         fuItemCost,
         description,
         status,
-        warehouseStatus:req.body.warehouseStatus,
+        secondStatus:req.body.secondStatus,
         approvedBy
     });
     res.status(200).json({ success: true });
@@ -114,7 +114,7 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
     }
 
     replenishmentRequest = await ReplenishmentRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
-    if((req.body.status=="Recieved") && (req.body.warehouseStatus == "Completed"))
+    if((req.body.status=="Recieved") && (req.body.secondStatus == "Completed"))
     {
         if((req.body.to=="Warehouse") && (req.body.from=="FU"))
         {
