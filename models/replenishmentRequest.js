@@ -59,7 +59,7 @@ const replenishmentRequestSchema = new mongoose.Schema({
     status: {
         type: String
     },
-    secondStatus:{
+    warehouseStatus:{
         type:String
     },
     approvedBy:{
