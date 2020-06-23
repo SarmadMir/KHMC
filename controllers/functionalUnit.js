@@ -110,6 +110,6 @@ exports.updateFunctionalUnit = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: functionalUnit });
 });
 exports.getHead = asyncHandler(async (req, res) => {
-  const head = await FunctionalUnit.find({fuHead: req.params._id});
+  const head = await FunctionalUnit.find({fuHead: req.params._id}).populate('buId');
   res.status(200).json({ success: true, data: head });
 });
