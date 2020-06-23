@@ -35,12 +35,14 @@ const warehouseInventoryLog = require('./routes/warehouseInventoryLog');
 const purchaseRequest = require('./routes/purchaseRequest');
 const purchaseOrder = require('./routes/purchaseOrder');
 const receiveItem = require('./routes/receiveItem');
+const receiveItemBU = require('./routes/receiveItemBU');
 const receiveItemFU = require('./routes/receiveItemFU');
 const materialReceiving = require('./routes/materialReceiving');
 const shippingTerm = require('./routes/shippingTerm');
 const accessLevel = require('./routes/accessLevel');
 const account = require('./routes/account');
 const replenishmentRequest = require('./routes/replenishmentRequest')
+const replenishmentRequestBU = require('./routes/replenishmentRequestBU')
 const app = express();
 
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -77,12 +79,14 @@ app.use('/api/warehouseinventorylog', warehouseInventoryLog);
 app.use('/api/purchaserequest', purchaseRequest);
 app.use('/api/purchaseorder', purchaseOrder);
 app.use('/api/receiveitem', receiveItem);
+app.use('/api/receiveitembu', receiveItemBU);
 app.use('/api/receiveitemfu', receiveItemFU);
 app.use('/api/materialreceiving', materialReceiving);
 app.use('/api/shippingterm', shippingTerm);
 app.use('/api/accesslevel', accessLevel);
 app.use('/api/account', account);
 app.use('/api/replenishmentRequest', replenishmentRequest);
+app.use('/api/replenishmentRequestBU', replenishmentRequestBU);
 app.use(errorHandler);
 
 // Set static folder
