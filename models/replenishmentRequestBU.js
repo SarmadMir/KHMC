@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const replenishmentRequestBUSchema = new mongoose.Schema({
     requestNo: {
         type: String
@@ -13,9 +12,6 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
     dateGenerated: {
         type: Date,
         default: Date.now
-    },
-    reason:{
-        type:String
     },
     fuId: {
         type: mongoose.Schema.ObjectId,
@@ -38,15 +34,6 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
     requestedQty:{
         type:Number
     },
-    recieptUnit:{
-        type:String
-    },
-    issueUnit:{
-        type:String
-    },
-    fuItemCost:{
-        type:Number
-    },
     description:{
         type:String
     },
@@ -55,10 +42,6 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
     },
     secondStatus:{
         type:String
-    },
-    approvedBy:{
-        type: mongoose.Schema.ObjectId,
-        ref: 'staff'
     },
     commentNote:{
         type:String
