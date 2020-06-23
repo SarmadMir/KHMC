@@ -4,6 +4,7 @@ const asyncHandler = require('../middleware/async');
 const { v4: uuidv4 } = require('uuid');
 const ReplenishmentRequestBU = require('../models/replenishmentRequestBU');
 const WHInventory = require('../models/warehouseInventory');
+const FunctionalUnit = require('../models/functionalUnit');
 const FUInventory = require('../models/fuInventory');
 const BUInventory = require('../models/buInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
@@ -19,7 +20,8 @@ exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
 exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,reason,fuId,buId,comments,itemId,currentQty,requestedQty,recieptUnit,
             issueUnit,fuItemCost,description,status,secondStatus,approvedBy} = req.body;
-            const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:req.body.fuId})
+            const bu = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
+            const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:bu._id})
             if(fu.qty<req.body.requestedQty)
             {
                 req.body.secondStatus = "Cannot be fulfilled"
