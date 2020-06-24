@@ -95,7 +95,7 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`Replenishment Request not found with id of ${_id}`, 404)
         );
     }
-    if(req.body.status=="Completed")
+    if(req.body.status=="complete")
     {
         const bui = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
         const fui = await FUInventory.findOne({itemId: req.body.itemId,fuId:bui._id})
