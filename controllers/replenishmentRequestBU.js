@@ -96,13 +96,13 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
         );
     }
     if(req.body.status=="complete")
-    {
+    { 
         const bui = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
-        const fui = await FUInventory.findOne({itemId: req.body.itemId,fuId:bui._id})
+        const fui = await FUInventory.findOne({itemId: req.body.itemId,fuId:bui._id})   
         const bu = await BUInventory.findOne({itemId: req.body.itemId,buId:req.body.buId})
         const fu = await FUInventory.findOne({itemId: req.body.itemId,_id:fui._id})
         await BUInventory.findOneAndUpdate({itemId: req.body.itemId,buId:req.body.buId}, { $set: { qty: bu.qty+req.body.requestedQty }},{new:true})
-        const pr = await FUInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: fu.qty-req.body.requestedQty }},{new:true}).populate('itemId')   
+        await FUInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: fu.qty-req.body.requestedQty }},{new:true}).populate('itemId')   
     }
     replenishmentRequest = await ReplenishmentRequestBU.findOneAndUpdate({_id: _id}, req.body,{new:true});
     res.status(200).json({ success: true, data: replenishmentRequest });
