@@ -84,7 +84,7 @@ const ReceiveItemFUSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    replenishmentRequestID:{
+    replenishmentRequestId:{
         type: mongoose.Schema.ObjectId,
         ref: 'ReplenishmentRequest',
     }
