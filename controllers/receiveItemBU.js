@@ -39,7 +39,8 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
         invoice,
         dateInvoice,
         dateReceived,
-        notes
+        notes,
+        replensihmentRequestId
     });
     await ReplenishmentRequestBU.findOneAndUpdate({_id: replensihmentRequestId},{ $set: { status:req.body.replensihmentRequestStatus,secondStatus:req.body.replensihmentRequestStatus }},{new:true});
     if((req.body.replensihmentRequestStatus=="ReceivedTest")||(req.body.replensihmentRequestStatus=="Partially ReceivedTest"))

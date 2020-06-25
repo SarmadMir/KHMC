@@ -39,7 +39,8 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
         invoice,
         dateInvoice,
         dateReceived,
-        notes
+        notes,
+        replensihmentRequestId
     });
     if((req.body.replensihmentRequestStatus=="Received")||(req.body.replensihmentRequestStatus=="Partially Received"))
     {
