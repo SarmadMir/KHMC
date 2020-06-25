@@ -68,6 +68,13 @@ const internalReturnRequestSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'ReplenishmentRequest'
     },
+    approvedBy:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'staff'
+    },
+    commentNote:{
+        type:String
+    },
     createdAt: {
         type: Date,
         default: Date.now
