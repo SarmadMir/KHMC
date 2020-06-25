@@ -52,6 +52,9 @@ const internalReturnRequestSchema = new mongoose.Schema({
         },
         date:{
             type:Date
+        },
+        itemCostPerUnit:{
+            type:Number
         }
     },
     status: {
