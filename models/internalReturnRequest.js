@@ -52,10 +52,21 @@ const internalReturnRequestSchema = new mongoose.Schema({
         },
         date:{
             type:Date
+        },
+        itemCostPerUnit:{
+            type:Number
         }
     },
     status: {
         type: String
+    },
+    replenismentRequestBU:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'ReplenishmentRequestBU'
+    },
+    replenismentRequestFU:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'ReplenishmentRequest'
     },
     createdAt: {
         type: Date,

@@ -11,15 +11,15 @@ const BUInventory = require('../models/buInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
 const Item = require('../models/item');
 exports.getInternalReturnRequestsFU = asyncHandler(async (req, res) => {
-    const internalRequestFU = await InternalReturnRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId');
+    const internalRequestFU = await InternalReturnRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId').populate('replenismentRequestFU');
     res.status(200).json({ success: true, data: internalRequestFU });
 });
 exports.getInternalReturnRequestsBU = asyncHandler(async (req, res) => {
-    const internalRequestBU = await InternalReturnRequest.find({to:"FU",from:"BU"}).populate('buId').populate('fuId').populate('itemId');
+    const internalRequestBU = await InternalReturnRequest.find({to:"FU",from:"BU"}).populate('buId').populate('fuId').populate('itemId').populate('replenismentRequestBU');
     res.status(200).json({ success: true, data: internalRequestBU });
 });
 exports.getInternalReturnRequestsById = asyncHandler(async (req, res) => {
-    const internalRequest = await InternalReturnRequest.findOne({_id:_id,}).populate('buId').populate('fuId').populate('itemId');
+    const internalRequest = await (await InternalReturnRequest.findOne({_id:_id,}).populate('buId').populate('fuId').populate('itemId').populate('replenismentRequestBU').populate('replenismentRequestFU'));
     res.status(200).json({ success: true, data: internalRequest });
 });
 exports.deleteInternalReturnRequests = asyncHandler(async (req, res, next) => {
@@ -36,7 +36,7 @@ exports.deleteInternalReturnRequests = asyncHandler(async (req, res, next) => {
 
 exports.addInternalReturnRequest = asyncHandler(async (req, res) => {
     const { generatedBy,dateGenerated,expiryDate,to,from,buId,itemId,currentQty,reason,
-           reasonDetail,description,status,damageReport} = req.body;
+           reasonDetail,description,status,damageReport,replenismentRequestBU,replenismentRequestBU} = req.body;
     await InternalReturnRequest.create({
         returnRequestNo: uuidv4(),
         generatedBy,
@@ -52,7 +52,8 @@ exports.addInternalReturnRequest = asyncHandler(async (req, res) => {
         reason,
         reasonDetail,
         damageReport,
-        status
+        status,
+        replenismentRequestBU,replenismentRequestFU
     });
     res.status(200).json({ success: true });
 });
