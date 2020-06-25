@@ -36,7 +36,7 @@ exports.deleteInternalReturnRequests = asyncHandler(async (req, res, next) => {
 
 exports.addInternalReturnRequest = asyncHandler(async (req, res) => {
     const { generatedBy,dateGenerated,expiryDate,to,from,buId,itemId,currentQty,reason,
-           reasonDetail,description,status,damageReport,replenismentRequestBU,replenismentRequestBU} = req.body;
+           reasonDetail,description,status,damageReport,replenismentRequestBU,replenismentRequestFU} = req.body;
     await InternalReturnRequest.create({
         returnRequestNo: uuidv4(),
         generatedBy,
