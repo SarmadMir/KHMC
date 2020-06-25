@@ -67,7 +67,10 @@ exports.updateInternalRequest = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`Internal Return not found with id of ${_id}`, 404)
         );
     }
-
+    if(req.body.status=="approved")
+    {
+        req.body.status="Item Returned to Warehouse"
+    }
     internalReturn = await InternalReturnRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
     res.status(200).json({ success: true, data: internalReturn });
 });
