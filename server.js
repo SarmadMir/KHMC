@@ -43,6 +43,7 @@ const accessLevel = require('./routes/accessLevel');
 const account = require('./routes/account');
 const replenishmentRequest = require('./routes/replenishmentRequest')
 const replenishmentRequestBU = require('./routes/replenishmentRequestBU')
+const internalReturnRequest = require('./routes/internalReturnRequest')
 const app = express();
 
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -87,6 +88,7 @@ app.use('/api/accesslevel', accessLevel);
 app.use('/api/account', account);
 app.use('/api/replenishmentRequest', replenishmentRequest);
 app.use('/api/replenishmentRequestBU', replenishmentRequestBU);
+app.use('/api/internalreturnrequest', internalReturnRequest);
 app.use(errorHandler);
 
 // Set static folder
