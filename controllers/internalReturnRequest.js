@@ -76,7 +76,7 @@ exports.updateInternalRequest = asyncHandler(async (req, res, next) => {
         req.body.status="Item Returned to Warehouse";
         if((req.body.to=="Warehouse")&&(req.body.from=="FU"))
         {
-         const receive = await receiveItemFU.findOne({replensihmentRequestId:req.body.replenismentRequestFU})
+         const receive = await receiveItemFU.findOne({replenishmentRequestId:req.body.replenismentRequestFU})
          const fu = await FUInventory.findOne({itemId: req.body.itemId})
          const wh = await WHInventory.findOne({itemId: req.body.itemId})
          await FUInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: fu.qty-receive.receivedQty }},{new:true})
@@ -85,7 +85,7 @@ exports.updateInternalRequest = asyncHandler(async (req, res, next) => {
         }
         if((req.body.to=="FU")&&(req.body.from=="BU"))
         {
-         const receive = await receiveItemBU.findOne({replensihmentRequestId:req.body.replenismentRequestFU})
+         const receive = await receiveItemBU.findOne({replenishmentRequestId:req.body.replenismentRequestFU})
          const bu = await BUInventory.findOne({itemId: req.body.itemId})
          const fu = await FUInventory.findOne({itemId: req.body.itemId})
          await BUInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: bu.qty-receive.receivedQty }},{new:true})
