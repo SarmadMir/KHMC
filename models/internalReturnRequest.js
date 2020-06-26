@@ -60,11 +60,11 @@ const internalReturnRequestSchema = new mongoose.Schema({
     status: {
         type: String
     },
-    replenismentRequestBU:{
+    replenishmentRequestBU:{
         type: mongoose.Schema.ObjectId,
         ref: 'ReplenishmentRequestBU'
     },
-    replenismentRequestFU:{
+    replenishmentRequestFU:{
         type: mongoose.Schema.ObjectId,
         ref: 'ReplenishmentRequest'
     },
