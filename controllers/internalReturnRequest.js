@@ -80,8 +80,8 @@ exports.updateInternalRequest = asyncHandler(async (req, res, next) => {
          const fu = await FUInventory.findOne({itemId: req.body.itemId})
          const wh = await WHInventory.findOne({itemId: req.body.itemId})
          await FUInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: fu.qty-receive.receivedQty }},{new:true})
-         await WHInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: wh.qty+receive.receivedQty }},{new:true})
-         await ReplenishmentRequest.findOneandUpdate({_id:req.body.replenishmentRequestFU},{ $set: { status: "Returned because of Issue", secondStatus:"Returned because of Issue"}})
+         await WHInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: wh.qty+receive.receivedQty }},{new:true})
+         await ReplenishmentRequest.findOneAndUpdate({_id:req.body.replenishmentRequestFU},{ $set: { status: "Returned because of Issue", secondStatus:"Returned because of Issue"}})
         }
         if((req.body.to=="FU")&&(req.body.from=="BU"))
         {
@@ -89,8 +89,8 @@ exports.updateInternalRequest = asyncHandler(async (req, res, next) => {
          const bu = await BUInventory.findOne({itemId: req.body.itemId})
          const fu = await FUInventory.findOne({itemId: req.body.itemId})
          await BUInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: bu.qty-receive.receivedQty }},{new:true})
-         await FUInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: fu.qty+receive.receivedQty }},{new:true})
-         await ReplenishmentRequestBU.findOneandUpdate({_id:req.body.replenishmentRequestBU},{ $set: { status: "Returned because of Issue", secondStatus:"Returned because of Issue"}})
+         await FUInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: fu.qty+receive.receivedQty }},{new:true})
+         await ReplenishmentRequestBU.findOneAndUpdate({_id:req.body.replenishmentRequestBU},{ $set: { status: "Returned because of Issue", secondStatus:"Returned because of Issue"}})
         }
     }
     internalReturn = await InternalReturnRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
