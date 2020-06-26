@@ -15,15 +15,15 @@ const FunctionalUnit = require('../models/functionalUnit');
 const PurchaseRequest = require('../models/purchaseRequest');
 const Item = require('../models/item');
 exports.getInternalReturnRequestsFU = asyncHandler(async (req, res) => {
-    const internalRequestFU = await InternalReturnRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId').populate('replenismentRequestFU');
+    const internalRequestFU = await InternalReturnRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId').populate('replenishmentRequestFU');
     res.status(200).json({ success: true, data: internalRequestFU });
 });
 exports.getInternalReturnRequestsBU = asyncHandler(async (req, res) => {
-    const internalRequestBU = await InternalReturnRequest.find({to:"FU",from:"BU"}).populate('buId').populate('fuId').populate('itemId').populate('replenismentRequestBU');
+    const internalRequestBU = await InternalReturnRequest.find({to:"FU",from:"BU"}).populate('buId').populate('fuId').populate('itemId').populate('replenishmentRequestBU');
     res.status(200).json({ success: true, data: internalRequestBU });
 });
 exports.getInternalReturnRequestsById = asyncHandler(async (req, res) => {
-    const internalRequest = await (await InternalReturnRequest.findOne({_id:_id,}).populate('buId').populate('fuId').populate('itemId').populate('replenismentRequestBU').populate('replenismentRequestFU'));
+    const internalRequest = await (await InternalReturnRequest.findOne({_id:_id,}).populate('buId').populate('fuId').populate('itemId').populate('replenishmentRequestBU').populate('replenishmentRequestFU'));
     res.status(200).json({ success: true, data: internalRequest });
 });
 exports.deleteInternalReturnRequests = asyncHandler(async (req, res, next) => {
@@ -40,7 +40,7 @@ exports.deleteInternalReturnRequests = asyncHandler(async (req, res, next) => {
 
 exports.addInternalReturnRequest = asyncHandler(async (req, res) => {
     const { generatedBy,dateGenerated,expiryDate,to,from,fuId,buId,itemId,currentQty,reason,
-           reasonDetail,description,status,damageReport,replenismentRequestBU,replenismentRequestFU} = req.body;
+           reasonDetail,description,status,damageReport,replenishmentRequestBU,replenishmentRequestFU} = req.body;
     await InternalReturnRequest.create({
         returnRequestNo: uuidv4(),
         generatedBy,
@@ -57,7 +57,7 @@ exports.addInternalReturnRequest = asyncHandler(async (req, res) => {
         reasonDetail,
         damageReport,
         status,
-        replenismentRequestBU,replenismentRequestFU
+        replenishmentRequestBU,replenishmentRequestFU
     });
     res.status(200).json({ success: true });
 });
@@ -76,21 +76,21 @@ exports.updateInternalRequest = asyncHandler(async (req, res, next) => {
         req.body.status="Item Returned to Warehouse";
         if((req.body.to=="Warehouse")&&(req.body.from=="FU"))
         {
-         const receive = await receiveItemFU.findOne({replensihmentRequestId:req.body.replenismentRequestFU})
+         const receive = await receiveItemFU.findOne({replenishmentRequestId:req.body.replenishmentRequestFU})
          const fu = await FUInventory.findOne({itemId: req.body.itemId})
          const wh = await WHInventory.findOne({itemId: req.body.itemId})
          await FUInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: fu.qty-receive.receivedQty }},{new:true})
          await WHInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: wh.qty+receive.receivedQty }},{new:true})
-         await ReplenishmentRequest.findOneandUpdate({_id:req.body.replenismentRequestFU},{ $set: { status: "Returned because of Issue", secondStatus:"Returned because of Issue"}})
+         await ReplenishmentRequest.findOneandUpdate({_id:req.body.replenishmentRequestFU},{ $set: { status: "Returned because of Issue", secondStatus:"Returned because of Issue"}})
         }
         if((req.body.to=="FU")&&(req.body.from=="BU"))
         {
-         const receive = await receiveItemBU.findOne({replensihmentRequestId:req.body.replenismentRequestFU})
+         const receive = await receiveItemBU.findOne({replenishmentRequestId:req.body.replenishmentRequestFU})
          const bu = await BUInventory.findOne({itemId: req.body.itemId})
          const fu = await FUInventory.findOne({itemId: req.body.itemId})
          await BUInventory.findOneAndUpdate({itemId: req.body.itemId}, { $set: { qty: bu.qty-receive.receivedQty }},{new:true})
          await FUInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: fu.qty+receive.receivedQty }},{new:true})
-         await ReplenishmentRequestBU.findOneandUpdate({_id:req.body.replenismentRequestBU},{ $set: { status: "Returned because of Issue", secondStatus:"Returned because of Issue"}})
+         await ReplenishmentRequestBU.findOneandUpdate({_id:req.body.replenishmentRequestBU},{ $set: { status: "Returned because of Issue", secondStatus:"Returned because of Issue"}})
         }
     }
     internalReturn = await InternalReturnRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
