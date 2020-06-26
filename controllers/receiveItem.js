@@ -19,7 +19,7 @@ exports.getReceiveItems = asyncHandler(async (req, res) => {
 exports.addReceiveItem = asyncHandler(async (req, res) => {
     const { itemId,currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
-        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,materialId,vendorId,prId } = req.body;
+        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,materialId,vendorId,prId,status } = req.body;
     await ReceiveItem.create({
         itemId,
         currentQty,
@@ -42,10 +42,10 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
         invoice,
         dateInvoice,
         dateReceived,
-        notes
+        notes,prId,status
     });
     await PurchaseRequest.findOneAndUpdate({'_id': prId},{ $set: { status: 'pending_approval_from_accounts' }},{new: true});
-    await WhInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
+    // await WhInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
     const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':prId},{ $set: { 'prId.$.status': 'received' }},{new: true});
    var count = 0;
     for(let i = 0; i<mat.prId.length; i++)
