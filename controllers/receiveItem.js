@@ -1,11 +1,13 @@
 /* eslint-disable prefer-const */
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const { v4: uuidv4 } = require('uuid');
+const ExternalReturnRequest = require('../models/externalReturnRequest');
 const ReceiveItem = require('../models/receiveItem');
 const MaterialReceiving = require('../models/materialReceiving');
-const WhInventory = require('../models/warehouseInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
 const Account = require('../models/account');
+// const moment = require('moment');
 exports.getReceiveItems = asyncHandler(async (req, res) => {
     const receiveItems = await ReceiveItem.find().populate('vendorId');
 
@@ -20,32 +22,81 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
     const { itemId,currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
         discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,materialId,vendorId,prId,status } = req.body;
-    await ReceiveItem.create({
-        itemId,
-        currentQty,
-        requestedQty,
-        receivedQty,
-        bonusQty,
-        batchNumber,
-        lotNumber,
-        expiryDate,
-        unit,
-        discount,
-        unitDiscount,
-        discountAmount,
-        tax,
-        taxAmount,
-        finalUnitPrice,
-        subTotal,
-        discountAmount2,
-        totalPrice,
-        invoice,
-        dateInvoice,
-        dateReceived,
-        notes,prId,status
-    });
+        if(req.body.receivedQty>req.body.requestedQty)
+        {
+        var qty=req.body.receivedQty-req.body.requestedQty;    
+        await ReceiveItem.create({
+            itemId,
+            currentQty,
+            requestedQty,
+            receivedQty:req.body.requestedQty,
+            bonusQty,
+            batchNumber,
+            lotNumber,
+            expiryDate,
+            unit,
+            discount,
+            unitDiscount,
+            discountAmount,
+            tax,
+            taxAmount,
+            finalUnitPrice,
+            subTotal,
+            discountAmount2,
+            totalPrice,
+            invoice,
+            dateInvoice,
+            dateReceived,
+            notes,prId,status
+        });
+        await ExternalReturnRequest.create({
+            returnRequestNo: uuidv4(),
+            generatedBy:"System",
+            dateGenerated:req.body.dateReceived,
+            expiryDate:req.body.expiryDate,
+            itemId:req.body.itemId,
+            currentQty:qty,
+            description,
+            reason:"Extra quantity",
+            reasonDetail:"Extra quantity arrived than requested",
+            status:"approved",
+            prId:req.body.prId
+        })
+        }
+        else{
+            await ReceiveItem.create({
+                itemId,
+                currentQty,
+                requestedQty,
+                receivedQty,
+                bonusQty,
+                batchNumber,
+                lotNumber,
+                expiryDate,
+                unit,
+                discount,
+                unitDiscount,
+                discountAmount,
+                tax,
+                taxAmount,
+                finalUnitPrice,
+                subTotal,
+                discountAmount2,
+                totalPrice,
+                invoice,
+                dateInvoice,
+                dateReceived,
+                notes,prId,status
+            });
+        }
+        
+    // var isafter = moment(req.body.dateReceived).isAfter(req.body.expiryDate);
+    // if (isafter)
+    // {
+    //  var popup="true"        
+    // }
+    
     await PurchaseRequest.findOneAndUpdate({'_id': prId},{ $set: { status: 'pending_approval_from_accounts' }},{new: true});
-    // await WhInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
     const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':prId},{ $set: { 'prId.$.status': req.body.status }},{new: true});
    var count = 0;
     for(let i = 0; i<mat.prId.length; i++)
@@ -62,7 +113,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
             vendorId:vendorId
         })
     }
-    res.status(200).json({ success: true});
+        res.status(200).json({ success: true});
 });
 
 exports.deleteReceiveItem = asyncHandler(async (req, res, next) => {
