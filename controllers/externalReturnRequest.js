@@ -35,11 +35,12 @@ exports.deleteExternalReturnRequests = asyncHandler(async (req, res, next) => {
 });
 
 exports.addExternalReturnRequest = asyncHandler(async (req, res) => {
-    const { generatedBy,dateGenerated,expiryDate,itemId,currentQty,reason,
+    const { generatedBy,generated,dateGenerated,expiryDate,itemId,currentQty,reason,
            reasonDetail,description,status,damageReport,prId} = req.body;
     await ExternalReturnRequest.create({
         returnRequestNo: uuidv4(),
         generatedBy,
+        generated,
         dateGenerated,
         expiryDate,
         itemId,

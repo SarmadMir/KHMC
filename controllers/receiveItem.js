@@ -69,6 +69,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
         await ExternalReturnRequest.create({
             returnRequestNo: uuidv4(),
             generatedBy:"System",
+            generated:"System",
             dateGenerated:req.body.dateReceived,
             expiryDate:req.body.expiryDate,
             itemId:req.body.itemId,
