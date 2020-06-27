@@ -20,6 +20,10 @@ const externalReturnRequestSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Item'
     },
+    prId:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'PurchaseRequest'
+    },
     description:{
         type:String
     },

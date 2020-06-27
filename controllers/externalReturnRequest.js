@@ -36,7 +36,7 @@ exports.deleteExternalReturnRequests = asyncHandler(async (req, res, next) => {
 
 exports.addExternalReturnRequest = asyncHandler(async (req, res) => {
     const { generatedBy,dateGenerated,expiryDate,itemId,currentQty,reason,
-           reasonDetail,description,status,damageReport} = req.body;
+           reasonDetail,description,status,damageReport,prId} = req.body;
     await ExternalReturnRequest.create({
         returnRequestNo: uuidv4(),
         generatedBy,
@@ -49,6 +49,7 @@ exports.addExternalReturnRequest = asyncHandler(async (req, res) => {
         reasonDetail,
         damageReport,
         status,
+        prId
     });
     res.status(200).json({ success: true });
 });
