@@ -6,6 +6,9 @@ const externalReturnRequestSchema = new mongoose.Schema({
     generatedBy: {
         type: String
     },
+    generated: {
+        type: String
+    },
     dateGenerated: {
         type: Date,
         default: Date.now

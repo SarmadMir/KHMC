@@ -22,6 +22,23 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
     const { itemId,currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
         discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,materialId,vendorId,prId,status } = req.body;
+          // var isafter = moment(req.body.dateReceived).isAfter(req.body.expiryDate);
+            // if (isafter)
+            // {
+                // await ExternalReturnRequest.create({
+                //     returnRequestNo: uuidv4(),
+                //     generatedBy:"System",
+                //     dateGenerated:req.body.dateReceived,
+                //     expiryDate:req.body.expiryDate,
+                //     itemId:req.body.itemId,
+                //     currentQty:req.body.qty,
+                //     description,
+                //     reason:"Date Expired",
+                //     reasonDetail:"Date Expired",
+                //     status:"approved",
+                //     prId:req.body.prId
+                // })
+            // }
         if(req.body.receivedQty>req.body.requestedQty)
         {
         var qty=req.body.receivedQty-req.body.requestedQty;    
@@ -52,6 +69,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
         await ExternalReturnRequest.create({
             returnRequestNo: uuidv4(),
             generatedBy:"System",
+            generated:"System",
             dateGenerated:req.body.dateReceived,
             expiryDate:req.body.expiryDate,
             itemId:req.body.itemId,
@@ -90,11 +108,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
             });
         }
         
-    // var isafter = moment(req.body.dateReceived).isAfter(req.body.expiryDate);
-    // if (isafter)
-    // {
-    //  var popup="true"        
-    // }
+  
     
     await PurchaseRequest.findOneAndUpdate({'_id': prId},{ $set: { status: 'pending_approval_from_accounts' }},{new: true});
     const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':prId},{ $set: { 'prId.$.status': req.body.status }},{new: true});
