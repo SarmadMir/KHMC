@@ -46,11 +46,11 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
     });
     await PurchaseRequest.findOneAndUpdate({'_id': prId},{ $set: { status: 'pending_approval_from_accounts' }},{new: true});
     // await WhInventory.updateOne({itemId: itemId}, { $set: { qty: currentQty+receivedQty }})
-    const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':prId},{ $set: { 'prId.$.status': 'received' }},{new: true});
+    const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':prId},{ $set: { 'prId.$.status': req.body.status }},{new: true});
    var count = 0;
     for(let i = 0; i<mat.prId.length; i++)
     {
-        if(mat.prId[i].status="received"){
+        if(mat.prId[i].status=="received"||mat.prId[i].status=="rejected"){
             count++;
         }
     }
