@@ -50,7 +50,7 @@ if(req.body.status=="approve"){
   })
   for(let i =0; i<account.mrId.prId.length; i++)
   {
-    if(account.mrId.prId[i].status=="approved"){
+    if(account.mrId.prId[i].status=="received"){
       var receive = await ReceiveItem.findOne({prId: account.mrId.prId[i].id})
       await WhInventory.updateOne({itemId: receive.itemId}, { $set: { qty: receive.currentQty+receive.receivedQty }})
     }
