@@ -1,4 +1,5 @@
 const express = require('express');
+const webpush = require("web-push");
 const dotenv = require('dotenv');
 const bodyparser = require('body-parser');
 const cors = require('cors');
@@ -6,13 +7,17 @@ const WebSocketServer = require('websocket').server;
 const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
-
+const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
+const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
 let connection = null;
 
 dotenv.config({ path: './config/.env' });
-
+webpush.setVapidDetails(
+  "mailto:hannanbutt1995@gmail.com",
+  publicVapidKey,
+  privateVapidKey
+);
 connectDB();
-
 // Route files
 const auth = require('./routes/auth');
 const item = require('./routes/item');
@@ -139,7 +144,21 @@ function sendevery5seconds() {
   connection.send(`Message ${Math.random()}`);
   setTimeout(sendevery5seconds, 10000);
 }
+app.post("/subscribe", (req, res) => {
+  // Get pushSubscription object
+  const subscription = req.body;
 
+  // Send 201 - resource created
+  res.status(201).json({});
+
+  // Create payload
+  const payload = JSON.stringify({ title: "Push Test" });
+
+  // Pass object into sendNotification
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
 // schedule tasks to be run on the server
 // * * * * * *
 // | | | | | |
