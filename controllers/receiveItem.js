@@ -9,7 +9,7 @@ const PurchaseRequest = require('../models/purchaseRequest');
 const Account = require('../models/account');
 // const moment = require('moment');
 exports.getReceiveItems = asyncHandler(async (req, res) => {
-    const receiveItems = await ReceiveItem.find().populate('vendorId');
+    const receiveItems = await ReceiveItem.find().populate('itemId').populate('prId');
 
     const data = {
         receiveItems
