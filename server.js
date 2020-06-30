@@ -144,21 +144,21 @@ function sendevery5seconds() {
   connection.send(`Message ${Math.random()}`);
   setTimeout(sendevery5seconds, 10000);
 }
-app.post("/subscribe", (req, res) => {
-  // Get pushSubscription object
-  const subscription = req.body;
+// app.post("/subscribe", (req, res) => {
+//   // Get pushSubscription object
+//   const subscription = req.body;
 
-  // Send 201 - resource created
-  res.status(201).json({});
+//   // Send 201 - resource created
+//   res.status(201).json({});
 
-  // Create payload
-  const payload = JSON.stringify({ title: "Push Test" });
+//   // Create payload
+//   const payload = JSON.stringify({ title: "Push Test" });
 
-  // Pass object into sendNotification
-  webpush
-    .sendNotification(subscription, payload)
-    .catch(err => console.error(err));
-});
+//   // Pass object into sendNotification
+//   webpush
+//     .sendNotification(subscription, payload)
+//     .catch(err => console.error(err));
+// });
 // schedule tasks to be run on the server
 // * * * * * *
 // | | | | | |
