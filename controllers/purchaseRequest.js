@@ -58,9 +58,8 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     department,
     orderType,
   });
-  const request = await Staff.find({staffTypeId:"5ee629ecf1967f0dfcc4ddb4"})
   const subscription = req.body.subscription;
-  const payload = JSON.stringify({ title: "Purchase Requested Generated",request:request });
+  const payload = JSON.stringify({ title: "Purchase Requested Generated",request:"5ee629ecf1967f0dfcc4ddb4" });
   webpush
     .sendNotification(subscription, payload)
     .catch(err => console.error(err));
