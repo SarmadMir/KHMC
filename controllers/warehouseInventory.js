@@ -74,3 +74,23 @@ const asyncHandler = require('../middleware/async');
           ]);
             res.status(200).json({ success: true, data: whinventoryDate });
     });
+    exports.getExpiredInventoryByInput = asyncHandler(async (req, res) => {
+        var inputDate = moment(req.body.inputDate).startOf('day').utc().toDate();
+        const whinventoryDate = await WhInventory.aggregate([
+            {
+              $lookup: {
+                from: 'items',
+                localField: 'itemId',
+                foreignField: '_id',
+                as: 'itemId',
+              },
+            },
+            { $unwind: '$itemId' },
+            {
+              $match: {
+                'itemId.expiration':{$lte:inputDate},
+              },
+            },
+          ]);
+            res.status(200).json({ success: true, data: whinventoryDate });
+    });
