@@ -6,7 +6,8 @@ const asyncHandler = require('../middleware/async');
 const WarehouseInventory = require('../models/warehouseInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
 const PurchaseRequestItems = require('../models/purchaseRequestItems');
-const Staff = require('../models/staff');
+const Subscription = require('../models/subscriber')
+
 const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
 const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
 webpush.setVapidDetails(
@@ -58,11 +59,48 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     department,
     orderType,
   });
-  const subscription = req.body.subscription;
-  const payload = JSON.stringify({ title: "Purchase Requested Generated",request:"5ee629ecf1967f0dfcc4ddb4" });
-  webpush
-    .sendNotification(subscription, payload)
-    .catch(err => console.error(err));
+  const payload = JSON.stringify({ title: "Purchase Requested Generated",message:"Kindly check the request" });
+  Subscription.find({}, (err, subscriptions) => {
+    if (err) {
+      console.error(`Error occurred while getting subscriptions`);
+      res.status(500).json({
+        error: 'Technical error occurred',
+      });
+    } else {
+      let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+        return new Promise((resolve, reject) => {
+          const pushSubscription = {
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: subscription.keys.p256dh,
+              auth: subscription.keys.auth,
+            },
+          };
+          const pushPayload = JSON.stringify(payload);
+          webpush
+            .sendNotification(pushSubscription, pushPayload)
+            .then((value) => {
+              // console.log(value);
+              resolve({
+                status: true,
+                endpoint: subscription.endpoint,
+                data: value,
+              });
+            })
+            .catch((err) => {
+              reject({
+                status: false,
+                endpoint: subscription.endpoint,
+                data: err,
+              });
+            });
+        });
+      });
+      res.json({
+        data: 'Push triggered',
+      });
+    }
+  });
   res.status(200).json({ success: true, data: purchaseRequest });
 });
 
