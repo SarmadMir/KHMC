@@ -12,6 +12,11 @@ exports.postSubscriber = asyncHandler(async (req, res) => {
         endpoint: req.body.subscription.endpoint,
         keys: req.body.subscription.keys,
       };
+    const exist = await Subscription.findOne({user:req.body.user})
+    if(exist)
+      {
+        await Subscription.deleteOne({uer:req.body.user})
+      }
     const subscriptionModel = new Subscription(obj);
     subscriptionModel.save((err, subscription) => {
         if (err) {
