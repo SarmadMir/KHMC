@@ -7,7 +7,9 @@ const WarehouseInventory = require('../models/warehouseInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
 const PurchaseRequestItems = require('../models/purchaseRequestItems');
 const Subscription = require('../models/subscriber')
-
+const StaffType = require('../models/staffType')
+const Staff = require('../models/staff')
+const User = require('../models/user')
 const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
 const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
 webpush.setVapidDetails(
@@ -60,7 +62,9 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     orderType,
   });
   const payload = JSON.stringify({ title: "Purchase Requested Generated",message:"Kindly check the request" });
-  Subscription.find({}, (err, subscriptions) => {
+  const test = await StaffType.findOne({type:"Committe Member"})
+  const test2 = await User.find({staffTypeId:test._id})
+  Subscription.find({user:test2._id}, (err, subscriptions) => {
     if (err) {
       console.error(`Error occurred while getting subscriptions`);
       res.status(500).json({
@@ -80,7 +84,6 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
           webpush
             .sendNotification(pushSubscription, pushPayload)
             .then((value) => {
-              // console.log(value);
               resolve({
                 status: true,
                 endpoint: subscription.endpoint,
@@ -95,9 +98,6 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
               });
             });
         });
-      });
-      res.json({
-        data: 'Push triggered',
       });
     }
   });
