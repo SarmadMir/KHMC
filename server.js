@@ -50,6 +50,7 @@ const replenishmentRequest = require('./routes/replenishmentRequest')
 const replenishmentRequestBU = require('./routes/replenishmentRequestBU')
 const internalReturnRequest = require('./routes/internalReturnRequest')
 const externalReturnRequest = require('./routes/externalReturnRequest')
+const subscriber = require('./routes/subscriber')
 const app = express();
 
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -96,6 +97,7 @@ app.use('/api/replenishmentRequest', replenishmentRequest);
 app.use('/api/replenishmentRequestBU', replenishmentRequestBU);
 app.use('/api/internalreturnrequest', internalReturnRequest);
 app.use('/api/externalreturnrequest', externalReturnRequest);
+app.use('/api/subscriber', subscriber);
 app.use(errorHandler);
 
 // Set static folder
