@@ -10,6 +10,7 @@ const Account = require('../models/account');
 const moment = require('moment');
 const StaffType = require('../models/staffType')
 const User = require('../models/user')
+const Subscription = require('../models/subscriber')
 const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
 const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
 webpush.setVapidDetails(
@@ -68,7 +69,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
                             auth: subscription.keys.auth,
                           },
                         };
-                        const pushPayload = JSON.stringify(payload);
+                        const pushPayload = payload;
                         webpush
                           .sendNotification(pushSubscription, pushPayload)
                           .then((value) => {
@@ -154,7 +155,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
                     auth: subscription.keys.auth,
                   },
                 };
-                const pushPayload = JSON.stringify(payload);
+                const pushPayload = payload;
                 webpush
                   .sendNotification(pushSubscription, pushPayload)
                   .then((value) => {
@@ -242,7 +243,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
                     auth: subscription.keys.auth,
                   },
                 };
-                const pushPayload = JSON.stringify(payload);
+                const pushPayload = payload;
                 webpush
                   .sendNotification(pushSubscription, pushPayload)
                   .then((value) => {

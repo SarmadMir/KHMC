@@ -82,7 +82,7 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
               auth: subscription.keys.auth,
             },
           };
-          const pushPayload = JSON.stringify(payload);
+          const pushPayload = payload;
           webpush
             .sendNotification(pushSubscription, pushPayload)
             .then((value) => {
