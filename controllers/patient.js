@@ -10,7 +10,8 @@ exports.getPatientById = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, data: patient });
   });
 exports.addPatient = asyncHandler(async (req, res) => {
-  const { identificationNumber, title, firstName, lastName, dob, gender, phoneNumber, email, country, city, address, otherDetails  } = req.body;
+  const { identificationNumber, title, firstName, lastName, dob, gender, phoneNumber, email, country, city, address,
+    insuranceNumber, insuranceVendor, coverageTerms, payment, otherDetails  } = req.body;
   const patient = await Patient.create({
     identificationNumber,
     title,
@@ -23,7 +24,12 @@ exports.addPatient = asyncHandler(async (req, res) => {
     country,
     city,
     address,
-    otherDetails
+    otherDetails,
+    insuranceNumber,
+    insuranceVendor,
+    coverageDetails,
+    coverageTerms,
+    payment
   });
   res.status(200).json({ success: true, data: patient });
 });

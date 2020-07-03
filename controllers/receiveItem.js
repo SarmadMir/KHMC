@@ -1,4 +1,4 @@
-/* eslint-disable prefer-const */
+const webpush = require("web-push");
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { v4: uuidv4 } = require('uuid');
@@ -8,6 +8,15 @@ const MaterialReceiving = require('../models/materialReceiving');
 const PurchaseRequest = require('../models/purchaseRequest');
 const Account = require('../models/account');
 const moment = require('moment');
+const StaffType = require('../models/staffType')
+const User = require('../models/user')
+const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
+const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
+webpush.setVapidDetails(
+  "mailto:hannanbutt1995@gmail.com",
+  publicVapidKey,
+  privateVapidKey
+);
 exports.getReceiveItems = asyncHandler(async (req, res) => {
     const receiveItems = await ReceiveItem.find().populate('itemId').populate('prId');
 
@@ -38,6 +47,49 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
                     status:"approved",
                     prId:req.body.prId
                 })
+                const payload = JSON.stringify({ title: "Item Date Expired",message:"Kindly check date of the item" });
+                const type = await StaffType.findOne({type:"Warehouse Incharge"})
+                const user = await User.find({staffTypeId:type._id})
+                for(var i = 0; i<user.length; i++ )
+                {
+                Subscription.find({user:user[i]._id}, (err, subscriptions) => {
+                  if (err) {
+                    console.error(`Error occurred while getting subscriptions`);
+                    res.status(500).json({
+                      error: 'Technical error occurred',
+                    });
+                  } else {
+                    let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+                      return new Promise((resolve, reject) => {
+                        const pushSubscription = {
+                          endpoint: subscription.endpoint,
+                          keys: {
+                            p256dh: subscription.keys.p256dh,
+                            auth: subscription.keys.auth,
+                          },
+                        };
+                        const pushPayload = JSON.stringify(payload);
+                        webpush
+                          .sendNotification(pushSubscription, pushPayload)
+                          .then((value) => {
+                            resolve({
+                              status: true,
+                              endpoint: subscription.endpoint,
+                              data: value,
+                            });
+                          })
+                          .catch((err) => {
+                            reject({
+                              status: false,
+                              endpoint: subscription.endpoint,
+                              data: err,
+                            });
+                          });
+                      });
+                    });
+                  }
+                });
+              }
             }
             if(!isafter){
         if(req.body.receivedQty>req.body.requestedQty)
@@ -81,6 +133,49 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
             status:"approved",
             prId:req.body.prId
         })
+        const payload = JSON.stringify({ title: "Extra Quantity Returned",message:"Kindly check quantity of the item" });
+        const type = await StaffType.findOne({type:"Warehouse Incharge"})
+        const user = await User.find({staffTypeId:type._id})
+        for(var i = 0; i<user.length; i++ )
+        {
+        Subscription.find({user:user[i]._id}, (err, subscriptions) => {
+          if (err) {
+            console.error(`Error occurred while getting subscriptions`);
+            res.status(500).json({
+              error: 'Technical error occurred',
+            });
+          } else {
+            let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+              return new Promise((resolve, reject) => {
+                const pushSubscription = {
+                  endpoint: subscription.endpoint,
+                  keys: {
+                    p256dh: subscription.keys.p256dh,
+                    auth: subscription.keys.auth,
+                  },
+                };
+                const pushPayload = JSON.stringify(payload);
+                webpush
+                  .sendNotification(pushSubscription, pushPayload)
+                  .then((value) => {
+                    resolve({
+                      status: true,
+                      endpoint: subscription.endpoint,
+                      data: value,
+                    });
+                  })
+                  .catch((err) => {
+                    reject({
+                      status: false,
+                      endpoint: subscription.endpoint,
+                      data: err,
+                    });
+                  });
+              });
+            });
+          }
+        });
+      }
         }
         else{
             await ReceiveItem.create({
@@ -126,6 +221,49 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
             status:"pending_approval_from_accounts",
             vendorId:vendorId
         })
+        const payload = JSON.stringify({ title: "Account Approval Needed",message:"Kindly check the order" });
+        const type = await StaffType.findOne({type:"Accounts Member"})
+        const user = await User.find({staffTypeId:type._id})
+        for(var i = 0; i<user.length; i++ )
+        {
+        Subscription.find({user:user[i]._id}, (err, subscriptions) => {
+          if (err) {
+            console.error(`Error occurred while getting subscriptions`);
+            res.status(500).json({
+              error: 'Technical error occurred',
+            });
+          } else {
+            let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+              return new Promise((resolve, reject) => {
+                const pushSubscription = {
+                  endpoint: subscription.endpoint,
+                  keys: {
+                    p256dh: subscription.keys.p256dh,
+                    auth: subscription.keys.auth,
+                  },
+                };
+                const pushPayload = JSON.stringify(payload);
+                webpush
+                  .sendNotification(pushSubscription, pushPayload)
+                  .then((value) => {
+                    resolve({
+                      status: true,
+                      endpoint: subscription.endpoint,
+                      data: value,
+                    });
+                  })
+                  .catch((err) => {
+                    reject({
+                      status: false,
+                      endpoint: subscription.endpoint,
+                      data: err,
+                    });
+                  });
+              });
+            });
+          }
+        });
+      }
     }
         res.status(200).json({ success: true});
 });
