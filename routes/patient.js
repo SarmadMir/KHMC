@@ -9,7 +9,7 @@ const {
 
 const router = express.Router();
 
-router.get('getpatient/:_id', getPatientById);
+router.get('/getpatient/:id', getPatientById);
 router.get('/getpatient', getPatient);
 router.post('/addpatient', addPatient);
 router.delete('/deletepatient/:_id', deletePatient);

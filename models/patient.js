@@ -42,6 +42,21 @@ const patientSchema = new mongoose.Schema({
     otherDetails: {
         type: String
     },
+    insuranceNumber:{
+        type:String
+    },
+    insuranceVendor:{
+        type:String
+    },
+    coverageDetails:{
+        type:String
+    },
+    coverageTerms:{
+        type:String
+    },
+    payment:{
+        type:String
+    },
      createdAt: {
         type: Date,
         default: Date.now
