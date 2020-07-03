@@ -62,11 +62,11 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     orderType,
   });
   const payload = JSON.stringify({ title: "Purchase Requested Generated",message:"Kindly check the request" });
-  const test = await StaffType.findOne({type:"Committe Member"})
-  const test2 = await User.find({staffTypeId:test._id})
-  for(var i = 0; i<test2.length; i++ )
+  const type = await StaffType.findOne({type:"Committe Member"})
+  const user = await User.find({staffTypeId:type._id})
+  for(var i = 0; i<user.length; i++ )
   {
-  Subscription.find({user:test2[i]._id}, (err, subscriptions) => {
+  Subscription.find({user:user[i]._id}, (err, subscriptions) => {
     if (err) {
       console.error(`Error occurred while getting subscriptions`);
       res.status(500).json({

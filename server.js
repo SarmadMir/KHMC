@@ -119,10 +119,8 @@ const websocket = new WebSocketServer({
 // when a legit websocket request comes listen to it and get the connection .. once you get a connection thats it!
 websocket.on('request', (request) => {
   connection = request.accept(null, request.origin);
-  console.log(connection)
   connection.on('open', () => console.log('Opened!!!'));
   connection.on('close', () => console.log('CLOSED!!!'));
-  connection.emit('test','testBody')
   connection.on('message', (message) => {
     console.log(`Received message ${message.utf8Data}`);
     if (message.utf8Data === 'add_vendor') {
