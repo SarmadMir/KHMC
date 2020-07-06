@@ -266,6 +266,18 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
         });
       }
     }
+    const ac = await Account.find().populate({
+      path : 'mrId',
+       populate: [{
+          path : 'poId',
+          populate : {
+            path : 'purchaseRequestId',
+            populate:{
+              path : 'item.itemId'
+            }
+            }}]
+    }).populate('vendorId');
+    globalVariable.io.emit("get_data", ac)
         res.status(200).json({ success: true});
 });
 
