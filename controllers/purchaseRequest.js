@@ -104,6 +104,10 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     }
   });
 }
+  const test = await PurchaseRequest.find()
+  .populate('itemId')
+  .populate('vendorId');
+  globalVariable.io.emit("get_data", test)
   res.status(200).json({ success: true, data: purchaseRequest });
 });
 
