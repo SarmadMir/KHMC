@@ -78,9 +78,6 @@ const VendorSchema = new mongoose.Schema({
     subClass:{
         type: String
     },
-    arabicName:{
-        type:String
-    },
     createdAt: {
         type: Date,
         default: Date.now
