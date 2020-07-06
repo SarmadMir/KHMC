@@ -2,13 +2,14 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bodyparser = require('body-parser');
 const cors = require('cors');
-const WebSocketServer = require('websocket').server;
 const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
+const http = require("http");
 let connection = null;
-
 dotenv.config({ path: './config/.env' });
+const socketIO = require("socket.io");
+const db = require("monk")('mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority');
 connectDB();
 // Route files
 const auth = require('./routes/auth');
@@ -94,61 +95,39 @@ app.use('/api/subscriber', subscriber);
 app.use('/api/patient', patient);
 app.use(errorHandler);
 
-// Set static folder
-// app.use(express.static(path.join(__dirname, 'public')));
-
 const PORT = process.env.PORT || 8080;
-
+const port = 4001
 const server = app.listen(
   PORT,
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 );
+const serverSocket = http.createServer(app);
+const io = socketIO(serverSocket);
 
+// const test1 = db.get("purchaserequests");
+// const test2 = db.get("purchaseorders");
+io.on("connection", socket => {
+    // socket.on("purchaseRequest", () => {
+    //   test1.find({}).then(docs => {
+    //     console.log(docs)
+    //     io.sockets.emit("get_data", docs);
+    //   });
+    // });
+    // socket.on("purchaseOrder", () => {
+    //   test2.find({}).then(docs => {
+    //     console.log(docs)
+    //     io.sockets.emit("get_data", docs);
+    //   });
+    // }); 
+    socket.on("disconnect", () => {
+      console.log("user disconnected");
+    });
+  });
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
   console.log(`Error: ${err.message}`);
   // Close server & exit process
   // server.close(() => process.exit(1));
 });
-
-// pass the server object to the WebSocketServer library to do all the job, this class will override the req/res
-const websocket = new WebSocketServer({
-  httpServer: server,
-});
-
-// when a legit websocket request comes listen to it and get the connection .. once you get a connection thats it!
-websocket.on('request', (request) => {
-  connection = request.accept(null, request.origin);
-  connection.on('open', () => console.log('Opened!!!'));
-  connection.on('close', () => console.log('CLOSED!!!'));
-  connection.on('message', (message) => {
-    console.log(`Received message ${message.utf8Data}`);
-    if (message.utf8Data === 'add_vendor') {
-      setTimeout(function () {
-        connection.send(message.utf8Data);
-      }, 500);
-    } else {
-      connection.send(`got your message: ${message.utf8Data}`);
-    }
-  });
-
-  // use connection.send to send stuff to the client
-  sendevery5seconds();
-});
-
-function sendevery5seconds() {
-  connection.send(`Message ${Math.random()}`);
-  setTimeout(sendevery5seconds, 10000);
-}
-// schedule tasks to be run on the server
-// * * * * * *
-// | | | | | |
-// | | | | | day of week
-// | | | | month
-// | | | day of month
-// | | hour
-// | minute
-// second ( optional )
-// cron.schedule('10 * * * *', function () {
-//   console.log('running a task every 10 minutes');
-// });
+global.globalVariable = { io: io };
+serverSocket.listen(port, () => console.log(`Listening on port ${port}`));
