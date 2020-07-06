@@ -71,9 +71,11 @@ const VendorSchema = new mongoose.Schema({
     cls: {
         type: String
     },
-    subClass:{
+    subClass:[
+        {
         type: String
-    },
+    }
+    ],
     createdAt: {
         type: Date,
         default: Date.now
