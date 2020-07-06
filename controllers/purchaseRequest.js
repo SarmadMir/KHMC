@@ -1,14 +1,13 @@
 const webpush = require("web-push");
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
-const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const ErrorResponse = require('../utils/errorResponse');
 const WarehouseInventory = require('../models/warehouseInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
 const PurchaseRequestItems = require('../models/purchaseRequestItems');
 const Subscription = require('../models/subscriber')
 const StaffType = require('../models/staffType')
-const Staff = require('../models/staff')
 const User = require('../models/user')
 const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
 const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
@@ -104,10 +103,10 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     }
   });
 }
-  const test = await PurchaseRequest.find()
+  const pr = await PurchaseRequest.find()
   .populate('itemId')
   .populate('vendorId');
-  globalVariable.io.emit("get_data", test)
+  globalVariable.io.emit("get_data", pr)
   res.status(200).json({ success: true, data: purchaseRequest });
 });
 

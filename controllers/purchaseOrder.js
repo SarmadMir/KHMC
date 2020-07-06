@@ -119,6 +119,10 @@ exports.addPurchaseOrder = asyncHandler(async (req, res) => {
     }
   });
 }
+  const po = await PurchaseOrder.find()
+  .populate('vendorId')
+  .populate('purchaseRequestId');
+  globalVariable.io.emit("get_data", po)
   res.status(200).json({ success: true, data: purchaseOrder });
 });
 

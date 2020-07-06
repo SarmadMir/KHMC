@@ -1,15 +1,12 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const bodyparser = require('body-parser');
+const http = require("http");
+const socketIO = require("socket.io");
 const cors = require('cors');
-const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
-const http = require("http");
-let connection = null;
 dotenv.config({ path: './config/.env' });
-const socketIO = require("socket.io");
-const db = require("monk")('mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority');
 connectDB();
 // Route files
 const auth = require('./routes/auth');
@@ -45,17 +42,14 @@ const internalReturnRequest = require('./routes/internalReturnRequest')
 const externalReturnRequest = require('./routes/externalReturnRequest')
 const subscriber = require('./routes/subscriber')
 const patient = require('./routes/patient')
-const app = express();
 
+const app = express();
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
-
-// Enable CORS
 app.use(cors());
 
 // Auth routes
 const { protect } = require('./middleware/auth');
-
 app.use(protect);
 
 // Mount routers
@@ -97,37 +91,24 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
 const port = 4001
-const server = app.listen(
+app.listen(
   PORT,
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 );
 const serverSocket = http.createServer(app);
 const io = socketIO(serverSocket);
 
-// const test1 = db.get("purchaserequests");
-// const test2 = db.get("purchaseorders");
 io.on("connection", socket => {
-    // socket.on("purchaseRequest", () => {
-    //   test1.find({}).then(docs => {
-    //     console.log(docs)
-    //     io.sockets.emit("get_data", docs);
-    //   });
-    // });
-    // socket.on("purchaseOrder", () => {
-    //   test2.find({}).then(docs => {
-    //     console.log(docs)
-    //     io.sockets.emit("get_data", docs);
-    //   });
-    // }); 
-    socket.on("disconnect", () => {
+  socket.on("disconnect", () => {
       console.log("user disconnected");
     });
   });
-// Handle unhandled promise rejections
+
+  // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
   console.log(`Error: ${err.message}`);
   // Close server & exit process
   // server.close(() => process.exit(1));
 });
 global.globalVariable = { io: io };
-serverSocket.listen(port, () => console.log(`Listening on port ${port}`));
+serverSocket.listen(port, () => console.log(`Socket is listening on port ${port}`));
