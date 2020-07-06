@@ -38,10 +38,6 @@ const VendorSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add zipcode']
     },
-    pobox: {
-        type: String,
-        required: [true, 'Please add P.O.Box']
-    },
     faxno: {
         type: String,
     },
