@@ -97,6 +97,15 @@ const asyncHandler = require('../middleware/async');
             },
             { $unwind: '$itemId' },
             {
+              $lookup: {
+                from: 'vendors',
+                localField: 'itemId.vendorId',
+                foreignField: '_id',
+                as: 'vendorId',
+              },
+            },
+            { $unwind: '$vendorId'},
+            {
               $match: {
                 'itemId.expiration':{$lte:inputDate},
               },
