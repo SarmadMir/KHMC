@@ -23,6 +23,12 @@ var transporter = nodemailer.createTransport({
     pass: 'Abc123##',
   },
 });
+exports.getPurchaseOrder = asyncHandler(async (req, res) => {
+  const purchaseOrder = await PurchaseOrder.find()
+  .populate('vendorId')
+  // .populate('purchaseRequestId');
+  res.status(200).json({ success: true, data: purchaseOrder });
+});
 exports.getPurchaseOrders = asyncHandler(async (req, res) => {
   const purchaseOrder = await PurchaseOrder.find()
     .populate('vendorId')
