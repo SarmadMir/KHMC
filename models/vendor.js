@@ -5,7 +5,7 @@ const VendorSchema = new mongoose.Schema({
         type: String
     },
     vendorNo: {
-
+        type:String
     },
     englishName: {
         type: String,
