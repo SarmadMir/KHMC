@@ -11,7 +11,7 @@ exports.getPatientById = asyncHandler(async (req, res) => {
   });
 exports.addPatient = asyncHandler(async (req, res) => {
   const { identificationNumber, title, firstName, lastName, dob, gender, phoneNumber, email, country, city, address,
-    insuranceNumber, insuranceVendor, coverageTerms, payment, otherDetails  } = req.body;
+    insuranceNumber, insuranceId, coverageTerms, payment, otherDetails  } = req.body;
   const patient = await Patient.create({
     identificationNumber,
     title,
@@ -26,7 +26,7 @@ exports.addPatient = asyncHandler(async (req, res) => {
     address,
     otherDetails,
     insuranceNumber,
-    insuranceVendor,
+    insuranceId,
     coverageDetails,
     coverageTerms,
     payment
