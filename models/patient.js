@@ -45,8 +45,9 @@ const patientSchema = new mongoose.Schema({
     insuranceNumber:{
         type:String
     },
-    insuranceVendor:{
-        type:String
+    insuranceId:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'insurance',
     },
     coverageDetails:{
         type:String

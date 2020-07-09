@@ -21,10 +21,10 @@ const replenishmentRequestSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'functionalUnit'
     },
-    buId:{
-        type: mongoose.Schema.ObjectId,
-        ref: 'businessUnit'
-    },
+    // buId:{
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'businessUnit'
+    // },
     to:{
         type:String
     },

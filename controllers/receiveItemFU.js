@@ -1,10 +1,23 @@
 /* eslint-disable prefer-const */
+const webpush = require("web-push");
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const PurchaseRequest = require('../models/purchaseRequest');
 const ReceiveItemFU = require('../models/receiveItemFU');
 const FUInventory = require('../models/fuInventory');
 const ReplenishmentRequest = require('../models/replenishmentRequest');
 const WHInventory = require('../models/warehouseInventory');
+const Item = require('../models/item');
+const StaffType = require('../models/staffType');
+const User = require('../models/user')
+const Subscription = require('../models/subscriber')
+const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
+const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
+webpush.setVapidDetails(
+  "mailto:hannanbutt1995@gmail.com",
+  publicVapidKey,
+  privateVapidKey
+);
 exports.getReceiveItemsFU = asyncHandler(async (req, res) => {
     const receiveItems = await ReceiveItemFU.find().populate('vendorId');
     const data = {
@@ -49,33 +62,80 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
             const wh = await WHInventory.findOne({itemId: itemId})
             await FUInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: fu.qty+parseInt(receivedQty) }},{new:true})
             const pr = await WHInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: wh.qty-parseInt(receivedQty) }},{new:true}).populate('itemId')
-        //     if(pr.qty<=pr.itemId.reorderLevel)
-        //     {
-        //     const j =await Item.findOne({_id:req.body.itemId}) 
-        //     var item={
-        //         itemId:req.body.itemId,
-        //         currQty:0,
-        //         reqQty:100,
-        //         comments:'System',
-        //         name:j.name,
-        //         description:j.description,
-        //         itemCode:j.itemCode
-        //     }
-        //         await PurchaseRequest.create({
-        //             requestNo: uuidv4(),
-        //             generated:'System',
-        //             generatedBy:'System',
-        //             committeeStatus: 'to_do',
-        //             status:'to_do',
-        //             comments:'System',
-        //             reason:'System',
-        //             item,
-        //             vendorId:j.vendorId,
-        //             requesterName:'System',
-        //             department:'System',
-        //             orderType:'System',
-        //           });
-        // }
+            if(pr.qty<=pr.itemId.reorderLevel)
+            {
+            const j =await Item.findOne({_id:req.body.itemId}) 
+            var item={
+                itemId:req.body.itemId,
+                currQty:0,
+                reqQty:100,
+                comments:'System',
+                name:j.name,
+                description:j.description,
+                itemCode:j.itemCode
+            }
+                await PurchaseRequest.create({
+                    requestNo: uuidv4(),
+                    generated:'System',
+                    generatedBy:'System',
+                    committeeStatus: 'to_do',
+                    status:'to_do',
+                    comments:'System',
+                    reason:'System',
+                    item,
+                    vendorId:j.vendorId,
+                    requesterName:'System',
+                    department:'System',
+                    orderType:'System',
+                  });
+                const payload = JSON.stringify({ title: "Purchase Request Generated",message:"Kindly check system generated purchase request" });
+                const type = await StaffType.findOne({type:"Warehouse Incharge"})
+                const user = await User.find({staffTypeId:type._id})
+                for(var i = 0; i<user.length; i++ )
+                {
+                Subscription.find({user:user[i]._id}, (err, subscriptions) => {
+                  if (err) {
+                    console.error(`Error occurred while getting subscriptions`);
+                    res.status(500).json({
+                      error: 'Technical error occurred',
+                    });
+                  } else {
+                    let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+                      return new Promise((resolve, reject) => {
+                        const pushSubscription = {
+                          endpoint: subscription.endpoint,
+                          keys: {
+                            p256dh: subscription.keys.p256dh,
+                            auth: subscription.keys.auth,
+                          },
+                        };
+                        const pushPayload = payload;
+                        webpush
+                          .sendNotification(pushSubscription, pushPayload)
+                          .then((value) => {
+                            resolve({
+                              status: true,
+                              endpoint: subscription.endpoint,
+                              data: value,
+                            });
+                          })
+                          .catch((err) => {
+                            reject({
+                              status: false,
+                              endpoint: subscription.endpoint,
+                              data: err,
+                            });
+                          });
+                      });
+                    });
+                  }
+                });
+              }
+              const pr2 = await PurchaseRequest.find()
+              .populate('item.itemId')
+              .populate('vendorId');
+              globalVariable.io.emit("get_data", pr2)
+        }
     }
 
     res.status(200).json({ success: true});
