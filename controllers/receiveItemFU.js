@@ -68,8 +68,8 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
             const j =await Item.findOne({_id:req.body.itemId}) 
             var item={
                 itemId:req.body.itemId,
-                currQty:0,
-                reqQty:100,
+                currQty:pr.qty,
+                reqQty:pr.itemId.maximumLevel-pr.qty,
                 comments:'System',
                 name:j.name,
                 description:j.description,
