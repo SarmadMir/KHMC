@@ -110,28 +110,34 @@ io.on("connection", socket => {
   });
 // const test1 = db.get("purchaserequests");
 // const test2 = db.get("purchaseorders");
-//   cron.schedule('* * * * *', () => {
+// var asd =[];
+// cron.schedule('* * * * *', () => {
 //     test1.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
 //       for(let i=0; i<docs.length; i++)
 //       {
-//         for (let j = i+1; j<docs.length; j++)
+//         console.log(docs[i].vendorId)
+//         if(docs[0].vendorId == docs[i].vendorId)
 //         {
-//           if(docs[i].vendorId == docs[j].vendorId)
-//           {
-//               test2.insert({
-//               purchaseOrderNo: uuidv4(),
-//               purchaseRequestId:docs,
-//               generated:'System',
-//               generatedBy:'System',
-//               date:moment().toDate(),
-//               vendorId:docs[0].vendorId,
-//               status: 'to_do',
-//               committeeStatus: 'to_do',
-//              })
-//           }          
+//           asd.push(docs[i]._id)
+//           console.log(asd)
 //         }
+//         // for (let j = i+1; j<docs.length; j++)
+//         // {
+//         //   if(docs[i].vendorId == docs[j].vendorId)
+//         //   {
+//         //       test2.insert({
+//         //       purchaseOrderNo: uuidv4(),
+//         //       purchaseRequestId:docs,
+//         //       generated:'System',
+//         //       generatedBy:'System',
+//         //       date:moment().toDate(),
+//         //       vendorId:docs[0].vendorId,
+//         //       status: 'to_do',
+//         //       committeeStatus: 'to_do',
+//         //      })
+//         //   }          
+//         // }
 //       }
-      
 //     });
 //   });
 

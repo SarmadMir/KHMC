@@ -26,7 +26,9 @@ exports.getReplenishmentRequestsByIdFU = asyncHandler(async (req, res) => {
 // });
 exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,reason,fuId,to,from,comments,itemId,currentQty,requestedQty,recieptUnit,
-            issueUnit,fuItemCost,description,status,secondStatus,approvedBy} = req.body;
+            issueUnit,fuItemCost,description,status,secondStatus,approvedBy,
+            requesterName,orderType,department
+        } = req.body;
             const wh = await WHInventory.findOne({itemId: req.body.itemId})
             if(wh.qty<req.body.requestedQty)
             {
@@ -79,7 +81,10 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
         description,
         status,
         secondStatus:req.body.secondStatus,
-        approvedBy
+        approvedBy,
+        requesterName,
+        orderType,
+        department
     });
     res.status(200).json({ success: true });
 });
