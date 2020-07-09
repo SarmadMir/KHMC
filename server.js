@@ -115,12 +115,26 @@ io.on("connection", socket => {
 //     test1.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
 //       for(let i=0; i<docs.length; i++)
 //       {
-//         console.log(docs[i].vendorId)
-//         if(docs[0].vendorId == docs[i].vendorId)
-//         {
-//           asd.push(docs[i]._id)
-//           console.log(asd)
-//         }
+//           if(docs[0].vendorId == docs[i].vendorId)
+//           {
+//             console.log("true")
+//           }
+//           else if (docs[0].vendorId != docs[i].vendorId)
+//           {
+//             console.log("false")
+//           }          
+//           //  console.log(docs[i].vendorId)
+//           // if(docs[0].vendorId === docs[i].vendorId)
+//           // {
+//           //   console.log(docs[i].vendorId)
+
+//           //   // console.log(docs[i]._id,"here")
+//           //   // asd.push(docs[i]._id)
+//           // }
+//           // else{
+//           //   console.log(docs[i].vendorId)
+//           //   console.log("false")
+//           // }
 //         // for (let j = i+1; j<docs.length; j++)
 //         // {
 //         //   if(docs[i].vendorId == docs[j].vendorId)
@@ -138,6 +152,7 @@ io.on("connection", socket => {
 //         //   }          
 //         // }
 //       }
+//       // console.log(asd)
 //     });
 //   });
 
