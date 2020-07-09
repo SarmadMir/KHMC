@@ -122,7 +122,7 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
                 fuId:fu._id,//Wrong logic should be dynamic
                 comments:'System generated Replenishment Request',
                 currentQty:rr.qty,
-                requestedQty:rr.itemId.maximumLevel-rr.qty,
+                requestedQty:100,
                 description:'System generated Replenishment Request',
                 status: 'to_do',
                 secondStatus:'to_do',
