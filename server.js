@@ -111,18 +111,27 @@ io.on("connection", socket => {
 // const test1 = db.get("purchaserequests");
 // const test2 = db.get("purchaseorders");
 // var asd =[];
-// cron.schedule('* * * * *', () => {
+// // cron.schedule('* * * * *', () => {
+//   setTimeout(() => {
+    
+
 //     test1.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
 //       for(let i=0; i<docs.length; i++)
 //       {
-//           if(docs[0].vendorId == docs[i].vendorId)
+//         console.log(typeof(docs[i].vendorId.toString()))
+//           // if(docs[0].vendorId === docs[1].vendorId)
+//           // {
+//           //   console.log(docs[i].vendorId,"true")
+//           // }
+
+//         if(docs[0].vendorId.toString() === docs[i].vendorId.toString())
 //           {
-//             console.log("true")
+//             console.log(docs[i].vendorId,"true")
 //           }
-//           else if (docs[0].vendorId != docs[i].vendorId)
-//           {
-//             console.log("false")
-//           }          
+//           // if (docs[i].vendorId !== docs[0].vendorId )
+//           // {
+//           //   console.log(docs[i].vendorId,"false")
+//           // }          
 //           //  console.log(docs[i].vendorId)
 //           // if(docs[0].vendorId === docs[i].vendorId)
 //           // {
@@ -154,7 +163,8 @@ io.on("connection", socket => {
 //       }
 //       // console.log(asd)
 //     });
-//   });
+//   }, 1000);
+//   // });
 
   // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
