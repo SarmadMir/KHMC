@@ -18,7 +18,7 @@ webpush.setVapidDetails(
 );
 exports.getPurchaseRequests = asyncHandler(async (req, res) => {
   const purchaseRequest = await PurchaseRequest.find()
-    .populate('itemId')
+    .populate('item.itemId')
     .populate('vendorId');
   const status = [
     { key: 'to_do', value: 'To do' },

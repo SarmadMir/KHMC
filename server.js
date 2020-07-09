@@ -4,6 +4,7 @@ const bodyparser = require('body-parser');
 const http = require("http");
 const socketIO = require("socket.io");
 const cors = require('cors');
+const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 dotenv.config({ path: './config/.env' });
@@ -103,6 +104,9 @@ io.on("connection", socket => {
   socket.on("disconnect", () => {
       console.log("user disconnected");
     });
+  });
+  cron.schedule('0 2 * * *', () => {
+    console.log('running every 2 hour');
   });
 
   // Handle unhandled promise rejections
