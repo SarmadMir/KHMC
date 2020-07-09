@@ -4,9 +4,12 @@ const bodyparser = require('body-parser');
 const http = require("http");
 const socketIO = require("socket.io");
 const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');
+const moment = require('moment');
 const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
+const db = require("monk")('mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority');
 dotenv.config({ path: './config/.env' });
 connectDB();
 // Route files
@@ -105,9 +108,32 @@ io.on("connection", socket => {
       console.log("user disconnected");
     });
   });
-  cron.schedule('0 2 * * *', () => {
-    console.log('running every 2 hour');
-  });
+// const test1 = db.get("purchaserequests");
+// const test2 = db.get("purchaseorders");
+//   cron.schedule('* * * * *', () => {
+//     test1.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
+//       for(let i=0; i<docs.length; i++)
+//       {
+//         for (let j = i+1; j<docs.length; j++)
+//         {
+//           if(docs[i].vendorId == docs[j].vendorId)
+//           {
+//               test2.insert({
+//               purchaseOrderNo: uuidv4(),
+//               purchaseRequestId:docs,
+//               generated:'System',
+//               generatedBy:'System',
+//               date:moment().toDate(),
+//               vendorId:docs[0].vendorId,
+//               status: 'to_do',
+//               committeeStatus: 'to_do',
+//              })
+//           }          
+//         }
+//       }
+      
+//     });
+//   });
 
   // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {

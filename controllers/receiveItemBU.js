@@ -71,7 +71,6 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
                     requestNo: uuidv4(),
                     generated:'System',
                     generatedBy:'System',
-                    dateGenerated:Date.now(),
                     reason:'Item quantity in Functional Unit is low then reorder level',
                     fuId:fu._id,//Wrong logic should be dynamic
                     comments:'System generated Replenishment Request',

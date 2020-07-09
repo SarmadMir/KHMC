@@ -66,6 +66,15 @@ const replenishmentRequestSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'staff'
     },
+    requesterName:{
+        type:String
+    },
+    orderType:{
+        type:String
+    },
+    department:{
+        type:String
+    },
     commentNote:{
         type:String
     },
