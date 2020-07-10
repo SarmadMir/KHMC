@@ -69,7 +69,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
             var item={
                 itemId:req.body.itemId,
                 currQty:pr.qty,
-                reqQty:100,
+                reqQty:pr.itemId.maximumLevel-pr.qty,
                 comments:'System',
                 name:j.name,
                 description:j.description,

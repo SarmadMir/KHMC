@@ -9,11 +9,11 @@ const BUInventory = require('../models/buInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
 const Item = require('../models/item');
 exports.getReplenishmentRequestsFU = asyncHandler(async (req, res) => {
-    const replenishmentRequest = await ReplenishmentRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId').populate('approvedBy');    
+    const replenishmentRequest = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy');    
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
 exports.getReplenishmentRequestsByIdFU = asyncHandler(async (req, res) => {
-    const replenishmentRequest = await ReplenishmentRequest.findOne({_id:_id,to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId');    
+    const replenishmentRequest = await ReplenishmentRequest.findOne({_id:_id}).populate('fuId').populate('itemId');    
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
 // exports.getReplenishmentRequestsBU = asyncHandler(async (req, res) => {
