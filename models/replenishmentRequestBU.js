@@ -55,6 +55,9 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
     orderType:{
         type:String
     },
+    reason:{
+        type:String
+    },
     createdAt: {
         type: Date,
         default: Date.now
