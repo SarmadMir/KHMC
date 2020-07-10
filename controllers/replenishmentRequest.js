@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+const webpush = require("web-push");
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { v4: uuidv4 } = require('uuid');
@@ -8,6 +9,16 @@ const FUInventory = require('../models/fuInventory');
 const BUInventory = require('../models/buInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
 const Item = require('../models/item');
+const StaffType = require('../models/staffType');
+const User = require('../models/user')
+const Subscription = require('../models/subscriber')
+const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
+const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
+webpush.setVapidDetails(
+  "mailto:hannanbutt1995@gmail.com",
+  publicVapidKey,
+  privateVapidKey
+);
 exports.getReplenishmentRequestsFU = asyncHandler(async (req, res) => {
     const replenishmentRequest = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy');    
     res.status(200).json({ success: true, data: replenishmentRequest });
@@ -56,7 +67,54 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
                         requesterName:'System',
                         department:'System',
                         orderType:'System',
-                      });                           
+                      }); 
+                      const payload = JSON.stringify({ title: "Purchase Request Generated",message:"Kindly check system generated purchase request" });
+                      const type = await StaffType.findOne({type:"Warehouse Incharge"})
+                      const user = await User.find({staffTypeId:type._id})
+                      for(var j = 0; j<user.length; j++ )
+                      {
+                      Subscription.find({user:user[j]._id}, (err, subscriptions) => {
+                        if (err) {
+                          console.error(`Error occurred while getting subscriptions`);
+                          res.status(500).json({
+                            error: 'Technical error occurred',
+                          });
+                        } else {
+                          let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+                            return new Promise((resolve, reject) => {
+                              const pushSubscription = {
+                                endpoint: subscription.endpoint,
+                                keys: {
+                                  p256dh: subscription.keys.p256dh,
+                                  auth: subscription.keys.auth,
+                                },
+                              };
+                              const pushPayload = payload;
+                              webpush
+                                .sendNotification(pushSubscription, pushPayload)
+                                .then((value) => {
+                                  resolve({
+                                    status: true,
+                                    endpoint: subscription.endpoint,
+                                    data: value,
+                                  });
+                                })
+                                .catch((err) => {
+                                  reject({
+                                    status: false,
+                                    endpoint: subscription.endpoint,
+                                    data: err,
+                                  });
+                                });
+                            });
+                          });
+                        }
+                      });
+                    }
+                    const pr2 = await PurchaseRequest.find()
+                    .populate('item.itemId')
+                    .populate('vendorId');
+                    globalVariable.io.emit("get_data", pr2)                          
             }
             else
             {
