@@ -40,6 +40,7 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
                   generatedBy:'System',
                   reason:'Item quantity in Functional Unit is low then reorder level',
                   fuId:fu._id,//Wrong logic should be dynamic
+                  itemId:req.body.itemId,
                   comments:'System generated Replenishment Request',
                   currentQty:fu.qty,
                   requestedQty:fu.itemId.maximumLevel-fu.qty,
@@ -158,6 +159,7 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
                 generatedBy:'System',
                 reason:'Item quantity in Functional Unit is low then reorder level',
                 fuId:fu._id,//Wrong logic should be dynamic
+                itemId:req.body.itemId,
                 comments:'System generated Replenishment Request',
                 currentQty:rr.qty,
                 requestedQty:rr.itemId.maximumLevel-rr.qty,
