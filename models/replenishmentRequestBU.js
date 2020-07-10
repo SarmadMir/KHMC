@@ -46,6 +46,15 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
     commentNote:{
         type:String
     },
+    requesterName: {
+        type:String
+    },
+    department: {
+        type:String
+    },
+    orderType:{
+        type:String
+    },
     createdAt: {
         type: Date,
         default: Date.now

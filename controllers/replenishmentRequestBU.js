@@ -28,7 +28,7 @@ exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
 });
 exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,buId,comments,itemId,currentQty,requestedQty,
-           description,status,secondStatus} = req.body;
+           description,status,secondStatus, requesterName, department, orderType} = req.body;
             const bu = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
             const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:bu._id})
             if(fu.qty<req.body.requestedQty)
@@ -76,6 +76,9 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
         requestedQty,
         description,
         status,
+        requesterName,
+        orderType,
+        department,
         // secondStatus,
         secondStatus:req.body.secondStatus,
     });
