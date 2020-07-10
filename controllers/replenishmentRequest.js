@@ -33,30 +33,30 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
             if(wh.qty<req.body.requestedQty)
             {
                 req.body.secondStatus = "Cannot be fulfilled"
-                // const i =await Item.findOne({_id:req.body.itemId}) 
-                // var item={
-                //     itemId:req.body.itemId,
-                //     currQty:0,
-                //     reqQty:100,
-                //     comments:'System',
-                //     name:i.name,
-                //     description:i.description,
-                //     itemCode:i.itemCode
-                // }
-                //     await PurchaseRequest.create({
-                //         requestNo: uuidv4(),
-                //         generated:'System',
-                //         generatedBy:'System',
-                //         committeeStatus: 'to_do',
-                //         status:'to_do',
-                //         comments:'System',
-                //         reason:'System',
-                //         item,
-                //         vendorId:i.vendorId,
-                //         requesterName:'System',
-                //         department:'System',
-                //         orderType:'System',
-                //       });                           
+                const i =await Item.findOne({_id:req.body.itemId}) 
+                var item={
+                    itemId:req.body.itemId,
+                    currQty:wh.qty,
+                    reqQty:i.maximumLevel-wh.qty,
+                    comments:'System',
+                    name:i.name,
+                    description:i.description,
+                    itemCode:i.itemCode
+                }
+                    await PurchaseRequest.create({
+                        requestNo: uuidv4(),
+                        generated:'System',
+                        generatedBy:'System',
+                        committeeStatus: 'to_do',
+                        status:'to_do',
+                        comments:'System',
+                        reason:'System',
+                        item,
+                        vendorId:i.vendorId,
+                        requesterName:'System',
+                        department:'System',
+                        orderType:'System',
+                      });                           
             }
             else
             {
