@@ -108,62 +108,102 @@ io.on("connection", socket => {
       console.log("user disconnected");
     });
   });
-// const test1 = db.get("purchaserequests");
-// const test2 = db.get("purchaseorders");
-// var asd =[];
+// const pRequest = db.get("purchaserequests");
+// const pOrder = db.get("purchaseorders");
+// var prArray =[];
+
 // // cron.schedule('* * * * *', () => {
-//   setTimeout(() => {
-    
 
-//     test1.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
-//       for(let i=0; i<docs.length; i++)
+//      pRequest.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
+//       var temp = [];
+//       for (let i = 0; i<docs.length; i++)
 //       {
-//         console.log(typeof(docs[i].vendorId.toString()))
-//           // if(docs[0].vendorId === docs[1].vendorId)
-//           // {
-//           //   console.log(docs[i].vendorId,"true")
-//           // }
-
-//         if(docs[0].vendorId.toString() === docs[i].vendorId.toString())
-//           {
-//             console.log(docs[i].vendorId,"true")
-//           }
-//           // if (docs[i].vendorId !== docs[0].vendorId )
-//           // {
-//           //   console.log(docs[i].vendorId,"false")
-//           // }          
-//           //  console.log(docs[i].vendorId)
-//           // if(docs[0].vendorId === docs[i].vendorId)
-//           // {
-//           //   console.log(docs[i].vendorId)
-
-//           //   // console.log(docs[i]._id,"here")
-//           //   // asd.push(docs[i]._id)
-//           // }
-//           // else{
-//           //   console.log(docs[i].vendorId)
-//           //   console.log("false")
-//           // }
-//         // for (let j = i+1; j<docs.length; j++)
-//         // {
-//         //   if(docs[i].vendorId == docs[j].vendorId)
-//         //   {
-//         //       test2.insert({
-//         //       purchaseOrderNo: uuidv4(),
-//         //       purchaseRequestId:docs,
-//         //       generated:'System',
-//         //       generatedBy:'System',
-//         //       date:moment().toDate(),
-//         //       vendorId:docs[0].vendorId,
-//         //       status: 'to_do',
-//         //       committeeStatus: 'to_do',
-//         //      })
-//         //   }          
-//         // }
+//         temp.push(docs[i])
 //       }
-//       // console.log(asd)
+//       var counter=0
+//       while(temp.length>0)
+//       {
+//         var c = [];
+//         var temp2 = temp[counter]
+//         if(temp2)
+//         {
+//         c = temp.filter((i)=> {i.vendorId.toString() === temp2.vendorId.toString()})
+//       }
+//         if (c.length==1)
+//         {
+//           c.push(temp[0])
+//         }
+//         var abc =[];
+//         var indexes=[];
+//         c.map(u=>{
+//           abc.push(u._id)
+//           temp.map((a,i)=>{
+//             if(c[i])
+//             {
+//               if(temp[i]==c[i])
+//               {
+//                 indexes.push(i)
+//               }
+//               else {
+//                 counter = i
+//               }
+//             }
+//           })
+//         })
+//         pOrder.insert({
+//         purchaseOrderNo: uuidv4(),
+//         purchaseRequestId:abc,
+//         generated:'System',
+//         generatedBy:'System',
+//         date:moment().toDate(),
+//         vendorId:c[0].vendorId,
+//         status: 'to_do',
+//         committeeStatus: 'to_do',
+//         })
+//         indexes.map(e=>{
+//           delete temp[e]
+//         })
+//         indexes=[];
+//         c=[];
+//         counter++
+//       }
+//       // for(let i=0; i<docs.length; i++)
+//       // {
+//       //   for (let j = i+1; j<docs.length; j++)
+//       //   {
+//       //   if(docs[i].vendorId.toString() === docs[j].vendorId.toString())
+//       //     {
+//       //       var vendor = docs[i].vendorId
+//       //       prArray.push(docs[i]._id)
+//       //       var prArray3 = prArray.filter((x, i) => i === prArray.indexOf(x))
+//       //     }
+//       //     else{
+//       //       var prArray2 =[];
+//       //       prArray2.push(docs[i]._id)
+//       //       pOrder.insert({
+//       //               purchaseOrderNo: uuidv4(),
+//       //               purchaseRequestId:prArray2,
+//       //               generated:'System',
+//       //               generatedBy:'System',
+//       //               date:moment().toDate(),
+//       //               vendorId:docs[i].vendorId,
+//       //               status: 'to_do',
+//       //               committeeStatus: 'to_do',
+//       //              })
+//       //     }
+//       //   }
+//       // }
+//       // pOrder.insert({
+//       //   purchaseOrderNo: uuidv4(),
+//       //   purchaseRequestId:prArray3,
+//       //   generated:'System',
+//       //   generatedBy:'System',
+//       //   date:moment().toDate(),
+//       //   vendorId:vendor,
+//       //   status: 'to_do',
+//       //   committeeStatus: 'to_do',
+//       //   })
 //     });
-//   }, 1000);
 //   // });
 
   // Handle unhandled promise rejections
