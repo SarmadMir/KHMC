@@ -57,4 +57,5 @@ if(req.body.status=="approve"){
   }
 }
   account = await Account.updateOne({ _id: _id }, req.body);
+  res.status(200).json({ success: true });
 });
