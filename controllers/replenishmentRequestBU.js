@@ -148,11 +148,10 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
     if(req.body.status=="complete")
     { 
         const fUnit = await FunctionalUnit.findOne({_id:req.body.fuId})
-        const fui = await FUInventory.findOne({itemId: req.body.itemId,fuId:fUnit._id})   
+        const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:fUnit._id})   
         const bu = await BUInventory.findOne({itemId: req.body.itemId,buId:req.body.buId})
-        const fu = await FUInventory.findOne({itemId: req.body.itemId,_id:fui._id})
         await BUInventory.findOneAndUpdate({itemId: req.body.itemId,buId:req.body.buId}, { $set: { qty: bu.qty+req.body.requestedQty }},{new:true})
-        const rr = await FUInventory.findOneAndUpdate({itemId: req.body.itemId,_id:fui._id }, { $set: { qty: fu.qty-req.body.requestedQty }},{new:true}).populate('itemId')   
+        const rr = await FUInventory.findOneAndUpdate({itemId: req.body.itemId,_id:fu._id }, { $set: { qty: fu.qty-req.body.requestedQty }},{new:true}).populate('itemId')   
         const item = await Item.findOne({_id:req.body.itemId})
         const wh = await WHInventory.findOne({itemId:req.body.itemId})
         var st;
@@ -174,7 +173,7 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
                 generated:'System',
                 generatedBy:'System',
                 reason:'reactivated_items',
-                fuId:fu._id,//Wrong logic should be dynamic
+                fuId:req.body.fuId,
                 itemId:req.body.itemId,
                 comments:'System generated Replenishment Request',
                 currentQty:rr.qty,
