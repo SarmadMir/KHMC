@@ -25,19 +25,19 @@ exports.getReplenishmentRequestsBU = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
 exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
-    const replenishmentRequest = await ReplenishmentRequestBU.findOne({_id:_id}).populate('buId').populate('fuId').populate('itemId');
+    const replenishmentRequest = await ReplenishmentRequestBU.findOne({_id:req.body._id}).populate('buId').populate('fuId').populate('itemId');
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
 exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,buId,comments,itemId,currentQty,requestedQty,
            description,status,secondStatus, requesterName, department, orderType, reason} = req.body;
            const func = await FunctionalUnit.findOne({_id:req.body.fuId})
-          //  const bu = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
+            // const bu = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
             const fui = await (await FUInventory.findOne({itemId: req.body.itemId,fuId:func._id})).populate('itemId')
             if(fui.qty<req.body.requestedQty)
             {
             req.body.secondStatus = "Cannot be fulfilled"
-            const wh = await WHInventory.findOne({itemId:req.body.itemId})
+            const wh = await (await WHInventory.findOne({itemId:req.body.itemId})).populate('itemId')
             const item = await Item.findOne({_id:req.body.itemId})
             var st;
             var st2;    
@@ -45,6 +45,29 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
             {
             st = "pending"
             st2 = "Cannot be fulfilled"
+            var item2={
+              itemId:req.body.itemId,
+              currQty:wh.qty,
+              reqQty:wh.itemId.maximumLevel-wh.qty,
+              comments:'System',
+              name:item.name,
+              description:item.description,
+              itemCode:item.itemCode
+          }
+              await PurchaseRequest.create({
+                  requestNo: uuidv4(),
+                  generated:'System',
+                  generatedBy:'System',
+                  committeeStatus: 'to_do',
+                  status:'to_do',
+                  comments:'System',
+                  reason:'reactivated_items',
+                  item:item2,
+                  vendorId:item.vendorId,
+                  requesterName:'System',
+                  department:'',
+                  orderType:'',
+                });
             }
             else
             {
