@@ -31,70 +31,93 @@ exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
 exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,buId,comments,itemId,currentQty,requestedQty,
            description,status,secondStatus, requesterName, department, orderType, reason} = req.body;
-            const bu = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
-            const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:bu._id})
-            if(fu.qty<req.body.requestedQty)
+           const func = await FunctionalUnit.findOne({_id:req.body.fuId})
+          //  const bu = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
+            const fui = await (await FUInventory.findOne({itemId: req.body.itemId,fuId:func._id})).populate('itemId')
+            if(fui.qty<req.body.requestedQty)
             {
-                req.body.secondStatus = "Cannot be fulfilled"
-          //       await ReplenishmentRequest.create({
-          //         requestNo: uuidv4(),
-          //         generated:'System',
-          //         generatedBy:'System',
-          //         reason:'Item quantity in Functional Unit is low then reorder level',
-          //         fuId:fu._id,//Wrong logic should be dynamic
-          //         itemId:req.body.itemId,
-          //         comments:'System generated Replenishment Request',
-          //         currentQty:fu.qty,
-          //         requestedQty:fu.itemId.maximumLevel-fu.qty,
-          //         description:'System generated Replenishment Request',
-          //         status: 'to_do',
-          //         secondStatus:'to_do',
-          //       });   
-          //       const payload = JSON.stringify({ title: "Replenishment Request Generated",message:"Kindly check system generated replenishment request" });
-          //   const type = await StaffType.findOne({type:"FU Incharge"})
-          //   const user = await User.find({staffTypeId:type._id})
-          //   for(var i = 0; i<user.length; i++ )
-          //   {
-          //   Subscription.find({user:user[i]._id}, (err, subscriptions) => {
-          //     if (err) {
-          //       console.error(`Error occurred while getting subscriptions`);
-          //       res.status(500).json({
-          //         error: 'Technical error occurred',
-          //       });
-          //     } else {
-          //       let parallelSubscriptionCalls = subscriptions.map((subscription) => {
-          //         return new Promise((resolve, reject) => {
-          //           const pushSubscription = {
-          //             endpoint: subscription.endpoint,
-          //             keys: {
-          //               p256dh: subscription.keys.p256dh,
-          //               auth: subscription.keys.auth,
-          //             },
-          //           };
-          //           const pushPayload = payload;
-          //           webpush
-          //             .sendNotification(pushSubscription, pushPayload)
-          //             .then((value) => {
-          //               resolve({
-          //                 status: true,
-          //                 endpoint: subscription.endpoint,
-          //                 data: value,
-          //               });
-          //             })
-          //             .catch((err) => {
-          //               reject({
-          //                 status: false,
-          //                 endpoint: subscription.endpoint,
-          //                 data: err,
-          //               });
-          //             });
-          //         });
-          //       });
-          //     }
-          //   });
-          // }
-          // const rr2 = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy')
-          // globalVariable.io.emit("get_data", rr2)                   
+            req.body.secondStatus = "Cannot be fulfilled"
+            const wh = await WHInventory.findOne({itemId:req.body.itemId})
+            const item = await Item.findOne({_id:req.body.itemId})
+            var st;
+            var st2;    
+            if(wh.qty<(fui.itemId.maximumLevel-fui.qty))
+            {
+            st = "pending"
+            st2 = "Cannot be fulfilled"
+            }
+            else
+            {
+            st = "pending"
+            st2 = "Can be fulfilled"
+            }
+            await ReplenishmentRequest.create({
+              requestNo: uuidv4(),
+              generated:'System',
+              generatedBy:'System',
+              reason:'reactivated_items',
+              fuId:req.body.fuId,
+              itemId:req.body.itemId,
+              comments:'System generated Replenishment Request',
+              currentQty:fui.qty,
+              requestedQty:fui.itemId.maximumLevel-fui.qty,
+              description:item.description,
+              status: st,
+              secondStatus:st2,
+              requesterName:'System',
+              orderType:'',
+              to:'Warehouse',
+              from:'FU',
+              recieptUnit:item.receiptUnit,
+              issueUnit:item.issueUnit,
+              fuItemCost:0,
+              department:''
+            });
+              const payload = JSON.stringify({ title: "Replenishment Request Generated",message:"Kindly check system generated replenishment request" });
+            const type = await StaffType.findOne({type:"FU Incharge"})
+            const user = await User.find({staffTypeId:type._id})
+            for(var i = 0; i<user.length; i++ )
+            {
+            Subscription.find({user:user[i]._id}, (err, subscriptions) => {
+              if (err) {
+                console.error(`Error occurred while getting subscriptions`);
+                res.status(500).json({
+                  error: 'Technical error occurred',
+                });
+              } else {
+                let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+                  return new Promise((resolve, reject) => {
+                    const pushSubscription = {
+                      endpoint: subscription.endpoint,
+                      keys: {
+                        p256dh: subscription.keys.p256dh,
+                        auth: subscription.keys.auth,
+                      },
+                    };
+                    const pushPayload = payload;
+                    webpush
+                      .sendNotification(pushSubscription, pushPayload)
+                      .then((value) => {
+                        resolve({
+                          status: true,
+                          endpoint: subscription.endpoint,
+                          data: value,
+                        });
+                      })
+                      .catch((err) => {
+                        reject({
+                          status: false,
+                          endpoint: subscription.endpoint,
+                          data: err,
+                        });
+                      });
+                  });
+                });
+              }
+            });
+          }
+          const rr2 = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy')
+          globalVariable.io.emit("get_data", rr2)                   
             }
             else
             {
