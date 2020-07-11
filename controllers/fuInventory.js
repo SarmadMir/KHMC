@@ -16,7 +16,10 @@ exports.getFuInventory = asyncHandler(async (req, res) => {
     }
     res.status(200).json({ success: true, data: data });
 });
-
+exports.getFuInventoryByFU = asyncHandler(async (req, res) => {
+    const fuInventory = await FuInventory.find({fuId:req.params._id}).populate('itemId').populate('fuId');
+    res.status(200).json({ success: true, data: fuInventory });
+});
 exports.addFuInventory = asyncHandler(async (req, res) => {
     const { fuId, itemId, qty } = req.body;
     const fuInventory = await FuInventory.create({
