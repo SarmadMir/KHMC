@@ -8,7 +8,7 @@ const BusinessUnit = require('../models/businessUnit');
 const Staff = require('../models/staff');
 
 exports.getWithBU = asyncHandler(async (req, res) => {
-  const functionalUnits = await FunctionalUnit.find({buId:req.body._id}).populate('fuHead').populate('buId');  
+  const functionalUnits = await FunctionalUnit.find({buId:req.params._id}).populate('fuHead').populate('buId');  
   res.status(200).json({ success: true, data: functionalUnits });
 });
 exports.getFunctionalUnits = asyncHandler(async (req, res) => {
