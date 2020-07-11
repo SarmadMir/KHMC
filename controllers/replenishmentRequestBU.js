@@ -182,7 +182,7 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
                 status: st,
                 secondStatus:st2,
                 requesterName:'System',
-                orderType:'System Generated',
+                orderType:'',
                 to:'Warehouse',
                 from:'FU',
                 recieptUnit:item.receiptUnit,

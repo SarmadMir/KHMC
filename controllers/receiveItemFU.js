@@ -87,12 +87,12 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
                     committeeStatus: 'to_do',
                     status:'to_do',
                     comments:'System',
-                    reason:'System',
+                    reason:'reactivated_items',
                     item,
                     vendorId:j.vendorId,
                     requesterName:'System',
-                    department:'System',
-                    orderType:'System',
+                    department:'',
+                    orderType:'',
                   });
                 const payload = JSON.stringify({ title: "Purchase Request Generated",message:"Kindly check system generated purchase request" });
                 const type = await StaffType.findOne({type:"Warehouse Incharge"})
