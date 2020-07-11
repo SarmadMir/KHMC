@@ -69,6 +69,51 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
                   department:'',
                   orderType:'',
                 });
+                const payload1 = JSON.stringify({ title: "Purchase Request Generated",message:"Kindly check system generated purchase request" });
+                const type1 = await StaffType.findOne({type:"FU Incharge"})
+                const user1 = await User.find({staffTypeId:type1._id})
+                for(var k = 0; k<user1.length; k++ )
+                {
+                Subscription.find({user:user1[k]._id}, (err, subscriptions) => {
+                  if (err) {
+                    console.error(`Error occurred while getting subscriptions`);
+                    res.status(500).json({
+                      error: 'Technical error occurred',
+                    });
+                  } else {
+                    let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+                      return new Promise((resolve, reject) => {
+                        const pushSubscription = {
+                          endpoint: subscription.endpoint,
+                          keys: {
+                            p256dh: subscription.keys.p256dh,
+                            auth: subscription.keys.auth,
+                          },
+                        };
+                        const pushPayload = payload1;
+                        webpush
+                          .sendNotification(pushSubscription, pushPayload)
+                          .then((value) => {
+                            resolve({
+                              status: true,
+                              endpoint: subscription.endpoint,
+                              data: value,
+                            });
+                          })
+                          .catch((err) => {
+                            reject({
+                              status: false,
+                              endpoint: subscription.endpoint,
+                              data: err,
+                            });
+                          });
+                      });
+                    });
+                  }
+                });
+              }
+              const rr3 = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy')
+              globalVariable.io.emit("get_data", rr3) 
             }
             else
             {
@@ -140,8 +185,8 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
               }
             });
           }
-          // const rr5 = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy')
-          // globalVariable.io.emit("get_data", rr5)                   
+          const rr5 = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy')
+          globalVariable.io.emit("get_data", rr5)                   
             }
             else
             {
@@ -207,6 +252,74 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
         {
          st = "pending"
          st2 = "Cannot be fulfilled"
+         var item2={
+          itemId:req.body.itemId,
+          currQty:wh.qty,
+          reqQty:wh.itemId.maximumLevel-wh.qty,
+          comments:'System',
+          name:item.name,
+          description:item.description,
+          itemCode:item.itemCode
+      }
+          await PurchaseRequest.create({
+              requestNo: uuidv4(),
+              generated:'System',
+              generatedBy:'System',
+              committeeStatus: 'to_do',
+              status:'to_do',
+              comments:'System',
+              reason:'reactivated_items',
+              item:item2,
+              vendorId:item.vendorId,
+              requesterName:'System',
+              department:'',
+              orderType:'',
+            });
+            const payload1 = JSON.stringify({ title: "Purchase Request Generated",message:"Kindly check system generated purchase request" });
+            const type1 = await StaffType.findOne({type:"FU Incharge"})
+            const user1 = await User.find({staffTypeId:type1._id})
+            for(var q = 0; q<user1.length; q++ )
+            {
+            Subscription.find({user:user1[q]._id}, (err, subscriptions) => {
+              if (err) {
+                console.error(`Error occurred while getting subscriptions`);
+                res.status(500).json({
+                  error: 'Technical error occurred',
+                });
+              } else {
+                let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+                  return new Promise((resolve, reject) => {
+                    const pushSubscription = {
+                      endpoint: subscription.endpoint,
+                      keys: {
+                        p256dh: subscription.keys.p256dh,
+                        auth: subscription.keys.auth,
+                      },
+                    };
+                    const pushPayload = payload1;
+                    webpush
+                      .sendNotification(pushSubscription, pushPayload)
+                      .then((value) => {
+                        resolve({
+                          status: true,
+                          endpoint: subscription.endpoint,
+                          data: value,
+                        });
+                      })
+                      .catch((err) => {
+                        reject({
+                          status: false,
+                          endpoint: subscription.endpoint,
+                          data: err,
+                        });
+                      });
+                  });
+                });
+              }
+            });
+          }
+          const rr3 = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy')
+          globalVariable.io.emit("get_data", rr3) 
         }
         else
         {
