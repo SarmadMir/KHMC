@@ -7,7 +7,7 @@ const fuInventorySchema = new mongoose.Schema({
     fuId: {
         type: mongoose.Schema.ObjectId,
         ref: 'functionalUnit',
-        required: [true, 'Please select Business Unit']
+        // required: [true, 'Please select Business Unit']
     },
     itemId: {
         type: mongoose.Schema.ObjectId,
