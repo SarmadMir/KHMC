@@ -402,7 +402,7 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
 });
   exports.getCurrentItemQuantityBU = asyncHandler(async (req, res) => {
     const buInventory = await BUInventory.findOne(
-      { itemId: req.body.itemId,buId:req.body.buId,fuId:req.body.fuId },
+      { itemId: req.body.itemId,buId:req.body.buId },
       { qty: 1 }
     );
     res.status(200).json({ success: true, data: buInventory });
