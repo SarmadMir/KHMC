@@ -17,6 +17,7 @@ const auth = require('./routes/auth');
 const item = require('./routes/item');
 const vendor = require('./routes/vendor');
 const buInventory = require('./routes/buInventory');
+const fuInventory = require('./routes/fuInventory');
 const buRepRequest = require('./routes/buRepRequest');
 const functionalUnit = require('./routes/functionalUnit');
 const buReturn = require('./routes/buReturn');
@@ -61,6 +62,7 @@ app.use('/api/auth', auth);
 app.use('/api/item', item);
 app.use('/api/vendor', vendor);
 app.use('/api/buinventory', buInventory);
+app.use('/api/fuinventory', fuInventory);
 app.use('/api/bureprequest', buRepRequest);
 app.use('/api/functionalunit', functionalUnit);
 app.use('/api/bureturn', buReturn);
@@ -112,7 +114,7 @@ io.on("connection", socket => {
 // const pOrder = db.get("purchaseorders");
 // var prArray =[];
 
-// // cron.schedule('* * * * *', () => {
+// // // cron.schedule('* * * * *', () => {
 
 //      pRequest.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
 //       var temp = [];
