@@ -112,45 +112,47 @@ io.on("connection", socket => {
   });
 const pRequest = db.get("purchaserequests");
 const pOrder = db.get("purchaseorders");
-var prArray =[];
 
-// // cron.schedule('* * * * *', () => {
-
-    //  pRequest.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
-    //   var temp = [];
-    //   for (let i = 0; i<docs.length; i++)
-    //   {
-    //     temp.push(docs[i])
-    //   }
-    //   while(temp.length >0)
-    //   {
-    //     var c= [];
-    //     var temp2 = temp[0]
-    //     if(temp2)
-    //     {
-    //     c = temp.filter((i)=> i.vendorId.toString() === temp2.vendorId.toString())
-    //   }
-    //    if(c.length>0)
-    //   {
-    //     var abc =[];
-    //            c.map(u=>{
-    //       abc.push(u._id)
-    //     })
-    //     pOrder.insert({
-    //     purchaseOrderNo: uuidv4(),
-    //     purchaseRequestId:abc,
-    //     generated:'System',
-    //     generatedBy:'System',
-    //     date:moment().toDate(),
-    //     vendorId:c[0].vendorId,
-    //     status: 'to_do',
-    //     committeeStatus: 'to_do',
-    //     })
-    //      temp = temp.filter((i)=>i.vendorId.toString()!=c[0].vendorId.toString())
-    //     }
-    // }
-    // });
-
+cron.schedule('*/2 * * * *', () => {
+   pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
+      var temp = [];
+      for (let i = 0; i<docs.length; i++)
+      {
+        temp.push(docs[i])
+      }
+      while(temp.length >0)
+      {
+        var c= [];
+        var temp2 = temp[0]
+        if(temp2)
+        {
+        c = temp.filter((i)=> i.vendorId.toString() === temp2.vendorId.toString())
+      }
+       if(c.length>0)
+      {
+        var abc =[];
+               c.map(u=>{
+          abc.push(u._id)
+        })
+        pOrder.insert({
+        purchaseOrderNo: uuidv4(),
+        purchaseRequestId:abc,
+        generated:'System',
+        generatedBy:'System',
+        date:moment().toDate(),
+        vendorId:c[0].vendorId,
+        status: 'to_do',
+        committeeStatus: 'to_do',
+        })
+         temp = temp.filter((i)=>i.vendorId.toString()!=c[0].vendorId.toString())
+        }
+    }
+    for(let i = 0; i<docs.length; i++)
+    {
+      pRequest.update({_id: docs[i]._id},  { $set: { committeeStatus: 'completed'} })
+    }
+    });
+  });
 
   // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {

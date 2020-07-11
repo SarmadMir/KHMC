@@ -72,9 +72,9 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
                 const payload1 = JSON.stringify({ title: "Purchase Request Generated",message:"Kindly check system generated purchase request" });
                 const type1 = await StaffType.findOne({type:"FU Incharge"})
                 const user1 = await User.find({staffTypeId:type1._id})
-                for(var i = 0; i<user1.length; i++ )
+                for(var k = 0; k<user1.length; k++ )
                 {
-                Subscription.find({user:user1[i]._id}, (err, subscriptions) => {
+                Subscription.find({user:user1[k]._id}, (err, subscriptions) => {
                   if (err) {
                     console.error(`Error occurred while getting subscriptions`);
                     res.status(500).json({
@@ -278,9 +278,9 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
             const payload1 = JSON.stringify({ title: "Purchase Request Generated",message:"Kindly check system generated purchase request" });
             const type1 = await StaffType.findOne({type:"FU Incharge"})
             const user1 = await User.find({staffTypeId:type1._id})
-            for(var i = 0; i<user1.length; i++ )
+            for(var q = 0; q<user1.length; q++ )
             {
-            Subscription.find({user:user1[i]._id}, (err, subscriptions) => {
+            Subscription.find({user:user1[q]._id}, (err, subscriptions) => {
               if (err) {
                 console.error(`Error occurred while getting subscriptions`);
                 res.status(500).json({
