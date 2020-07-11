@@ -2,6 +2,7 @@ const express = require('express');
 const { validateParams } = require('../middleware/validator');
 
 const {
+    getWithBU,
     getFunctionalUnits,
     getFunctionalUnitLogs,
     addFunctionalUnit,
@@ -11,7 +12,7 @@ const {
 } = require('../controllers/functionalUnit');
 
 const router = express.Router();
-
+router.get('/getwithbu/:_id', getWithBU);
 router.get('/gethead/:_id', getHead);
 router.get('/getfunctionalunits', getFunctionalUnits);
 router.get('/getfunctionalunitlogs/:_id', getFunctionalUnitLogs);
