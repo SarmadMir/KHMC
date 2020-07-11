@@ -9,6 +9,7 @@ const FUInventory = require('../models/fuInventory');
 const BUInventory = require('../models/buInventory');
 const WHInventory = require('../models/warehouseInventory');
 const ReplenishmentRequest = require('../models/replenishmentRequest');
+const PurchaseRequest = require('../models/purchaseRequest');
 const StaffType = require('../models/staffType');
 const User = require('../models/user')
 const Item = require('../models/item');
@@ -33,11 +34,11 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
            description,status,secondStatus, requesterName, department, orderType, reason} = req.body;
            const func = await FunctionalUnit.findOne({_id:req.body.fuId})
             // const bu = await FunctionalUnit.findOne({buId:req.body.buId})//wrong logic change when more data
-            const fui = await (await FUInventory.findOne({itemId: req.body.itemId,fuId:func._id})).populate('itemId')
-            if(fui.qty<req.body.requestedQty)
+            const fui = await FUInventory.findOne({itemId: req.body.itemId,fuId:func._id}).populate('itemId')
+            if(fui.qty<parseInt(req.body.requestedQty))
             {
             req.body.secondStatus = "Cannot be fulfilled"
-            const wh = await (await WHInventory.findOne({itemId:req.body.itemId})).populate('itemId')
+            const wh = await WHInventory.findOne({itemId:req.body.itemId}).populate('itemId')
             const item = await Item.findOne({_id:req.body.itemId})
             var st;
             var st2;    
@@ -139,8 +140,8 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
               }
             });
           }
-          const rr2 = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy')
-          globalVariable.io.emit("get_data", rr2)                   
+          // const rr5 = await ReplenishmentRequest.find().populate('fuId').populate('itemId').populate('approvedBy')
+          // globalVariable.io.emit("get_data", rr5)                   
             }
             else
             {
@@ -151,7 +152,7 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
         generated,
         generatedBy,
         dateGenerated,        
-        fuId:bu._id,
+        fuId:func._id,
         buId,
         comments,
         itemId,

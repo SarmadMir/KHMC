@@ -110,142 +110,47 @@ io.on("connection", socket => {
       console.log("user disconnected");
     });
   });
-// const pRequest = db.get("purchaserequests");
-// const pOrder = db.get("purchaseorders");
-// var prArray =[];
+const pRequest = db.get("purchaserequests");
+const pOrder = db.get("purchaseorders");
+var prArray =[];
 
-// // // cron.schedule('* * * * *', () => {
+// // cron.schedule('* * * * *', () => {
 
-//      pRequest.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
-//       // console.log(docs)
-//       var temp = [];
-//       for (let i = 0; i<docs.length; i++)
-//       {
-//         temp.push(docs[i])
-//       }
-//       var counter=0
-//       while(temp.length !=0)
-//       {
-//         var c= [];
-//         var temp2 = temp[counter]
-//         if(temp2)
-//         {
-//         c = temp.filter((i)=> {i.vendorId.toString() === temp2.vendorId.toString()})
-//       }
+    //  pRequest.find({committeeStatus:'to_do',generated:'System'}).then(docs => {
+    //   var temp = [];
+    //   for (let i = 0; i<docs.length; i++)
+    //   {
+    //     temp.push(docs[i])
+    //   }
+    //   while(temp.length >0)
+    //   {
+    //     var c= [];
+    //     var temp2 = temp[0]
+    //     if(temp2)
+    //     {
+    //     c = temp.filter((i)=> i.vendorId.toString() === temp2.vendorId.toString())
+    //   }
+    //    if(c.length>0)
+    //   {
+    //     var abc =[];
+    //            c.map(u=>{
+    //       abc.push(u._id)
+    //     })
+    //     pOrder.insert({
+    //     purchaseOrderNo: uuidv4(),
+    //     purchaseRequestId:abc,
+    //     generated:'System',
+    //     generatedBy:'System',
+    //     date:moment().toDate(),
+    //     vendorId:c[0].vendorId,
+    //     status: 'to_do',
+    //     committeeStatus: 'to_do',
+    //     })
+    //      temp = temp.filter((i)=>i.vendorId.toString()!=c[0].vendorId.toString())
+    //     }
+    // }
+    // });
 
-//        if(c.length>0)
-//       {
-//         console.log(c)
-//         console.log("here in if")
-//         var abc =[];
-//                c.map(u=>{
-//           abc.push(u._id)
-//           temp.map((a,i)=>{
-//             if(c[i])
-//             {
-//               if(temp[i]==c[i])
-//               {
-//                 indexes.push(i)
-//               }
-//               else {
-//                 counter = i
-//               }
-//             }
-//           })
-//         })
-//         pOrder.insert({
-//         purchaseOrderNo: uuidv4(),
-//         purchaseRequestId:abc,
-//         generated:'System',
-//         generatedBy:'System',
-//         date:moment().toDate(),
-//         vendorId:c[0].vendorId,
-//         status: 'to_do',
-//         committeeStatus: 'to_do',
-//         })
-//         return
-//         // temp = temp.filter((i)=>i.vendorId!=c[0].vendorId)
-//       }
-
-//     }
-//       //   var c = [];
-
-//       //   if (c.length==1)
-//       //   {
-//       //     c.push(temp[0])
-//       //   }
-//       //   var abc =[];
-//       //   var indexes=[];
-//       //   c.map(u=>{
-//       //     abc.push(u._id)
-//       //     temp.map((a,i)=>{
-//       //       if(c[i])
-//       //       {
-//       //         if(temp[i]==c[i])
-//       //         {
-//       //           indexes.push(i)
-//       //         }
-//       //         else {
-//       //           counter = i
-//       //         }
-//       //       }
-//       //     })
-//       //   })
-//       //   pOrder.insert({
-//       //   purchaseOrderNo: uuidv4(),
-//       //   purchaseRequestId:abc,
-//       //   generated:'System',
-//       //   generatedBy:'System',
-//       //   date:moment().toDate(),
-//       //   vendorId:c[0].vendorId,
-//       //   status: 'to_do',
-//       //   committeeStatus: 'to_do',
-//       //   })
-//       //   indexes.map(e=>{
-//       //     delete temp[e]
-//       //   })
-//       //   indexes=[];
-//       //   c=[];
-//       //   counter++
-//       // }
-//       // for(let i=0; i<docs.length; i++)
-//       // {
-//       //   for (let j = i+1; j<docs.length; j++)
-//       //   {
-//       //   if(docs[i].vendorId.toString() === docs[j].vendorId.toString())
-//       //     {
-//       //       var vendor = docs[i].vendorId
-//       //       prArray.push(docs[i]._id)
-//       //       var prArray3 = prArray.filter((x, i) => i === prArray.indexOf(x))
-//       //     }
-//       //     else{
-//       //       var prArray2 =[];
-//       //       prArray2.push(docs[i]._id)
-//       //       pOrder.insert({
-//       //               purchaseOrderNo: uuidv4(),
-//       //               purchaseRequestId:prArray2,
-//       //               generated:'System',
-//       //               generatedBy:'System',
-//       //               date:moment().toDate(),
-//       //               vendorId:docs[i].vendorId,
-//       //               status: 'to_do',
-//       //               committeeStatus: 'to_do',
-//       //              })
-//       //     }
-//       //   }
-//       // }
-//       // pOrder.insert({
-//       //   purchaseOrderNo: uuidv4(),
-//       //   purchaseRequestId:prArray3,
-//       //   generated:'System',
-//       //   generatedBy:'System',
-//       //   date:moment().toDate(),
-//       //   vendorId:vendor,
-//       //   status: 'to_do',
-//       //   committeeStatus: 'to_do',
-//       //   })
-//     });
-//   // });
 
   // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
