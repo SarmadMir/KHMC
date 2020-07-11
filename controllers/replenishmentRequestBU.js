@@ -42,14 +42,14 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
             const item = await Item.findOne({_id:req.body.itemId})
             var st;
             var st2;    
-            if(wh.qty<(fui.itemId.maximumLevel-fui.qty))
+            if(wh.qty<(parseInt(req.body.requestedQty)-fui.qty))
             {
             st = "pending"
             st2 = "Cannot be fulfilled"
             var item2={
               itemId:req.body.itemId,
               currQty:wh.qty,
-              reqQty:wh.itemId.maximumLevel-wh.qty,
+              reqQty:req.body.requestedQty-wh.qty,
               comments:'System',
               name:item.name,
               description:item.description,
