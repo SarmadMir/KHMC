@@ -31,7 +31,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
         discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,replenishmentRequestId,replenishmentRequestStatus,fuId } = req.body;
         const pRequest = await WHInventory.findOne({itemId: itemId}).populate('itemId')
-        const fuTest = await FUInventory.findOne({itemId: itemId})
+        const fuTest = await FUInventory.findOne({itemId: itemId,fuId:req.body.fuId})
         if(pRequest && fuTest)
         {
         await ReceiveItemFU.create({
@@ -61,9 +61,9 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
     });}
     if((req.body.replenishmentRequestStatus=="Received")||(req.body.replenishmentRequestStatus=="Partially Received"))
     {
-            const fu = await FUInventory.findOne({itemId: itemId})
+            const fu = await FUInventory.findOne({itemId: itemId, fuId:req.body.fuId})
             const wh = await WHInventory.findOne({itemId: itemId})
-            await FUInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: fu.qty+parseInt(receivedQty) }},{new:true})
+            await FUInventory.findOneAndUpdate({itemId: itemId, fuId:req.body.fuId}, { $set: { qty: fu.qty+parseInt(receivedQty) }},{new:true})
             const pr = await WHInventory.findOneAndUpdate({itemId: itemId}, { $set: { qty: wh.qty-parseInt(receivedQty) }},{new:true}).populate('itemId')
             if(fu && pr)
             {
