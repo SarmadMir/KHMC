@@ -12,7 +12,6 @@ const {
 } = require('../controllers/item');
 
 const router = express.Router();
-
 router.get('/getitem/:_id', getItem);
 router.get('/getitems', getItems);
 router.get('/getsearcheditems/:keyword', getSearchedItems);
