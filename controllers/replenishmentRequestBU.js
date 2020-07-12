@@ -29,6 +29,21 @@ exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
     const replenishmentRequest = await ReplenishmentRequestBU.findOne({_id:req.body._id}).populate('buId').populate('fuId').populate('itemId');
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
+
+exports.deleteReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
+  const { _id } = req.params;
+  const replenishmentRequest = await ReplenishmentRequestBU.findById(_id);
+  if(!replenishmentRequest) {
+      return next(
+      new ErrorResponse(`Replenishment Request not found with id of ${_id}`, 404)
+      );
+  }
+
+  await ReplenishmentRequest.deleteOne({_id: _id});
+
+  res.status(200).json({ success: true, data: {} });
+});
+
 exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,buId,comments,itemId,currentQty,requestedQty,
            description,status,secondStatus, requesterName, department, orderType, reason} = req.body;
@@ -215,19 +230,6 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true });
 });
 
-exports.deleteReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
-    const { _id } = req.params;
-    const replenishmentRequest = await ReplenishmentRequestBU.findById(_id);
-    if(!replenishmentRequest) {
-        return next(
-        new ErrorResponse(`Replenishment Request not found with id of ${_id}`, 404)
-        );
-    }
-
-    await ReplenishmentRequest.deleteOne({_id: _id});
-
-    res.status(200).json({ success: true, data: {} });
-});
 
 exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
     const { _id } = req.body;

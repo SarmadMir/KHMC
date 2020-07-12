@@ -113,7 +113,7 @@ io.on("connection", socket => {
 const pRequest = db.get("purchaserequests");
 const pOrder = db.get("purchaseorders");
 
-cron.schedule('*/2 * * * *', () => {
+cron.schedule('* */8 * * *', () => {
    pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
       var temp = [];
       for (let i = 0; i<docs.length; i++)
