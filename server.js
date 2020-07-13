@@ -181,7 +181,7 @@ cron.schedule('* * * * *', () => {
              console.log('Email sent: ' + info.response);
            }
          });
-         const { prId} = req.body;
+         const { prId} = [{id:docs[0]._id, status:"not recieved"}];
          MaterialRecievingModel.create({
            prId,
            poId : pot._id,
