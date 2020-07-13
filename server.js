@@ -123,7 +123,8 @@ io.on("connection", socket => {
   });
 const pRequest = db.get("purchaserequests");
 const pOrder = db.get("purchaseorders");
-cron.schedule('* * * * *', () => {
+cron.schedule('*/30 * * * * *', () => {
+  console.log("test")
    pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
       var temp = [];
       for (let i = 0; i<docs.length; i++)
@@ -181,15 +182,15 @@ cron.schedule('* * * * *', () => {
              console.log('Email sent: ' + info.response);
            }
          });
-         const { prId} = [{id:docs[0]._id, status:"not recieved"}];
-         MaterialRecievingModel.create({
-           prId,
-           poId : pot._id,
-           vendorId : pot.vendorId,
-           status : "items_in_transit"
-       }).then(function(data, err){
+      //    const { prId} = [{id:docs[0]._id, status:"not recieved"}];
+      //    MaterialRecievingModel.create({
+      //      prId,
+      //      poId : pot._id,
+      //      vendorId : pot.vendorId,
+      //      status : "items_in_transit"
+      //  }).then(function(data, err){
 
-       })
+      //  })
       })
          temp = temp.filter((i)=>i.vendorId.toString()!=c[0].vendorId.toString())
         }
