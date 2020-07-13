@@ -148,6 +148,7 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     });
     if(test.secondStatus == "Cannot be fulfilled")
     {
+      const item2 = await Item.findOne({_id:req.body.itemId})
       await ReplenishmentRequest.create({
         requestNo: uuidv4(),
         generated:'System',
@@ -158,15 +159,15 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
         comments:'System generated Replenishment Request',
         currentQty:fui.qty,
         requestedQty:fui.itemId.maximumLevel-fui.qty,
-        description:item.description,
+        description:item2.description,
         status: st,
         secondStatus:st2,
         requesterName:'System',
         orderType:'',
         to:'Warehouse',
         from:'FU',
-        recieptUnit:item.receiptUnit,
-        issueUnit:item.issueUnit,
+        recieptUnit:item2.receiptUnit,
+        issueUnit:item2.issueUnit,
         fuItemCost:0,
         department:'',
         rrB:test._id
