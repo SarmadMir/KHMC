@@ -1,6 +1,7 @@
 const express = require('express');
 const asyncHandler = require('./middleware/async');
 const pOrderModel = require('./models/purchaseOrder')
+const MaterialRecievingModel = require('./models/materialReceiving')
 const dotenv = require('dotenv');
 const bodyparser = require('body-parser');
 const http = require("http");
@@ -156,7 +157,7 @@ cron.schedule('* * * * *', () => {
         createdAt:moment().toDate(),
         updatedAt:moment().toDate()
       })  
-        pOrderModel.findOneAndUpdate({committeeStatus:'approved',generated:'System'},{ $set: { committeeStatus: "po_sent", status:"po_sent"}},{new:true}).populate({
+        const pot = pOrderModel.findOneAndUpdate({committeeStatus:'approved',generated:'System'},{ $set: { committeeStatus: "po_sent", status:"po_sent"}},{new:true}).populate({
           path : 'purchaseRequestId',
           populate: [{
               path : 'item.itemId',
@@ -179,7 +180,17 @@ cron.schedule('* * * * *', () => {
            } else {
              console.log('Email sent: ' + info.response);
            }
-         });})
+         });
+         const { prId} = req.body;
+         MaterialRecievingModel.create({
+           prId,
+           poId : pot._id,
+           vendorId : pot.vendorId,
+           status : "items_in_transit"
+       }).then(function(data, err){
+
+       })
+      })
          temp = temp.filter((i)=>i.vendorId.toString()!=c[0].vendorId.toString())
         }
     }
