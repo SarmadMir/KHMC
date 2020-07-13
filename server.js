@@ -122,7 +122,7 @@ io.on("connection", socket => {
   });
 const pRequest = db.get("purchaserequests");
 const pOrder = db.get("purchaseorders");
-cron.schedule('*/2 * * * *', () => {
+cron.schedule('* * * * *', () => {
    pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
       var temp = [];
       for (let i = 0; i<docs.length; i++)
@@ -152,6 +152,7 @@ cron.schedule('*/2 * * * *', () => {
         vendorId:c[0].vendorId,
         status: 'items_in_transit',
         committeeStatus: 'approved',
+        sentAt:moment().toDate(),
         createdAt:moment().toDate(),
         updatedAt:moment().toDate()
       })  
