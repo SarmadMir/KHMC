@@ -21,6 +21,9 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'businessUnit'
     },
+    patientReferenceNo:{
+        type:String,
+    },
     comments:{
         type: String
     },
