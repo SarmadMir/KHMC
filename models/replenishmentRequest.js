@@ -38,6 +38,10 @@ const replenishmentRequestSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Item'
     },
+    rrB:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'ReplenishmentRequestBU' 
+    },
     currentQty:{
         type:Number
     },
