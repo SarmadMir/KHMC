@@ -1,4 +1,6 @@
 const express = require('express');
+const asyncHandler = require('./middleware/async');
+const pOrderModel = require('./models/purchaseOrder')
 const dotenv = require('dotenv');
 const bodyparser = require('body-parser');
 const http = require("http");
@@ -9,9 +11,17 @@ const moment = require('moment');
 const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
+var nodemailer = require('nodemailer');
 const db = require("monk")('mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority');
 dotenv.config({ path: './config/.env' });
 connectDB();
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'abdulhannan.itsolution@gmail.com',
+    pass: 'Abc123##',
+  },
+});
 // Route files
 const auth = require('./routes/auth');
 const item = require('./routes/item');
@@ -112,7 +122,6 @@ io.on("connection", socket => {
   });
 const pRequest = db.get("purchaserequests");
 const pOrder = db.get("purchaseorders");
-
 cron.schedule('*/2 * * * *', () => {
    pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
       var temp = [];
@@ -141,9 +150,35 @@ cron.schedule('*/2 * * * *', () => {
         generatedBy:'System',
         date:moment().toDate(),
         vendorId:c[0].vendorId,
-        status: 'to_do',
-        committeeStatus: 'to_do',
-        })
+        status: 'items_in_transit',
+        committeeStatus: 'approved',
+        createdAt:moment().toDate(),
+        updatedAt:moment().toDate()
+      })  
+        pOrderModel.findOneAndUpdate({committeeStatus:'approved',generated:'System'},{ $set: { committeeStatus: "po_sent", status:"po_sent"}},{new:true}).populate({
+          path : 'purchaseRequestId',
+          populate: [{
+              path : 'item.itemId',
+              }]
+      }).populate('vendorId').then(function(data, err){
+      const vendorEmail = data.vendorId.contactEmail
+      var content = data.purchaseRequestId.reduce(function(a, b) {
+    return a + '<tr><td>' + b.item.itemId.itemCode + '</a></td><td>' + b.item.itemId.name + '</td><td>' + b.item.reqQty + '</td></tr>';
+     }, '');
+       var mailOptions = {
+           from: 'abdulhannan.itsolution@gmail.com',
+           to: vendorEmail,
+           subject: 'Request for items',
+           html: '<div><table><thead><tr><th>Item Code</th><th>Item Name</th><th>Quantity</th></tr></thead><tbody>' + 
+           content + '</tbody></table></div>'
+         };
+         transporter.sendMail(mailOptions, function(error, info){
+           if (error) {
+             console.log(error);
+           } else {
+             console.log('Email sent: ' + info.response);
+           }
+         });})
          temp = temp.filter((i)=>i.vendorId.toString()!=c[0].vendorId.toString())
         }
     }
