@@ -123,7 +123,7 @@ io.on("connection", socket => {
   });
 const pRequest = db.get("purchaserequests");
 const pOrder = db.get("purchaseorders");
-cron.schedule('* * * * *', () => {
+cron.schedule('*/30 0 * * * *', () => {
    pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
       var temp = [];
       for (let i = 0; i<docs.length; i++)
@@ -157,7 +157,7 @@ cron.schedule('* * * * *', () => {
         createdAt:moment().toDate(),
         updatedAt:moment().toDate()
       })  
-        const pot = pOrderModel.findOneAndUpdate({committeeStatus:'approved',generated:'System'},{ $set: { committeeStatus: "po_sent", status:"po_sent"}},{new:true}).populate({
+        pOrderModel.findOneAndUpdate({committeeStatus:'approved',generated:'System'},{ $set: { committeeStatus: "po_sent", status:"po_sent"}},{new:true}).populate({
           path : 'purchaseRequestId',
           populate: [{
               path : 'item.itemId',
@@ -181,14 +181,19 @@ cron.schedule('* * * * *', () => {
              console.log('Email sent: ' + info.response);
            }
          });
-         const { prId} = [{id:docs[0]._id, status:"not recieved"}];
+    var work = [];
+    for(let q=0; q<docs.length; q++)
+    {
+      work.push(
+        {id:docs[q]._id, status:"not recieved"}
+      )
+    }
          MaterialRecievingModel.create({
-           prId,
-           poId : pot._id,
-           vendorId : pot.vendorId,
+           prId : work,
+           poId : data._id,
+           vendorId : data.vendorId._id,
            status : "items_in_transit"
        }).then(function(data, err){
-
        })
       })
          temp = temp.filter((i)=>i.vendorId.toString()!=c[0].vendorId.toString())

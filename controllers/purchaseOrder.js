@@ -82,53 +82,6 @@ exports.addPurchaseOrder = asyncHandler(async (req, res) => {
     status,
     committeeStatus: 'to_do',
   });
-  const payload = JSON.stringify({ title: "Purchase Order Generated",message:"Kindly check the order" });
-  const type = await StaffType.findOne({type:"Committe Member"})
-  const user = await User.find({staffTypeId:type._id})
-  for(var i = 0; i<user.length; i++ )
-  {
-  Subscription.find({user:user[i]._id}, (err, subscriptions) => {
-    if (err) {
-      console.error(`Error occurred while getting subscriptions`);
-      res.status(500).json({
-        error: 'Technical error occurred',
-      });
-    } else {
-      let parallelSubscriptionCalls = subscriptions.map((subscription) => {
-        return new Promise((resolve, reject) => {
-          const pushSubscription = {
-            endpoint: subscription.endpoint,
-            keys: {
-              p256dh: subscription.keys.p256dh,
-              auth: subscription.keys.auth,
-            },
-          };
-          const pushPayload = payload;
-          webpush
-            .sendNotification(pushSubscription, pushPayload)
-            .then((value) => {
-              resolve({
-                status: true,
-                endpoint: subscription.endpoint,
-                data: value,
-              });
-            })
-            .catch((err) => {
-              reject({
-                status: false,
-                endpoint: subscription.endpoint,
-                data: err,
-              });
-            });
-        });
-      });
-    }
-  });
-}
-  const po = await PurchaseOrder.find()
-  .populate('vendorId')
-  .populate('purchaseRequestId');
-  globalVariable.io.emit("get_data", po)
   res.status(200).json({ success: true, data: purchaseOrder });
 });
 
@@ -200,3 +153,54 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json({ success: true, data: purchaseOrder });
 });
+
+
+
+
+// const payload = JSON.stringify({ title: "Purchase Order Generated",message:"Kindly check the order" });
+// const type = await StaffType.findOne({type:"Committe Member"})
+// const user = await User.find({staffTypeId:type._id})
+// for(var i = 0; i<user.length; i++ )
+// {
+// Subscription.find({user:user[i]._id}, (err, subscriptions) => {
+//   if (err) {
+//     console.error(`Error occurred while getting subscriptions`);
+//     res.status(500).json({
+//       error: 'Technical error occurred',
+//     });
+//   } else {
+//     let parallelSubscriptionCalls = subscriptions.map((subscription) => {
+//       return new Promise((resolve, reject) => {
+//         const pushSubscription = {
+//           endpoint: subscription.endpoint,
+//           keys: {
+//             p256dh: subscription.keys.p256dh,
+//             auth: subscription.keys.auth,
+//           },
+//         };
+//         const pushPayload = payload;
+//         webpush
+//           .sendNotification(pushSubscription, pushPayload)
+//           .then((value) => {
+//             resolve({
+//               status: true,
+//               endpoint: subscription.endpoint,
+//               data: value,
+//             });
+//           })
+//           .catch((err) => {
+//             reject({
+//               status: false,
+//               endpoint: subscription.endpoint,
+//               data: err,
+//             });
+//           });
+//       });
+//     });
+//   }
+// });
+// }
+// const po = await PurchaseOrder.find()
+// .populate('vendorId')
+// .populate('purchaseRequestId');
+// globalVariable.io.emit("get_data", po)
