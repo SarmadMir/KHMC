@@ -24,6 +24,10 @@ const PurchaseRequestSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Vendor',
   },
+  rr:{
+    type: mongoose.Schema.ObjectId,
+    ref: 'ReplenishmentRequest' 
+},
   item: {
     itemId: {
       type: mongoose.Schema.ObjectId,

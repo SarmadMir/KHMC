@@ -124,7 +124,6 @@ io.on("connection", socket => {
 const pRequest = db.get("purchaserequests");
 const pOrder = db.get("purchaseorders");
 cron.schedule('*/30 * * * * *', () => {
-  console.log("test")
    pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
       var temp = [];
       for (let i = 0; i<docs.length; i++)
@@ -185,8 +184,8 @@ cron.schedule('*/30 * * * * *', () => {
       //    const { prId} = [{id:docs[0]._id, status:"not recieved"}];
       //    MaterialRecievingModel.create({
       //      prId,
-      //      poId : pot._id,
-      //      vendorId : pot.vendorId,
+      //      poId : data._id,
+      //      vendorId : data.vendorId._id,
       //      status : "items_in_transit"
       //  }).then(function(data, err){
 
