@@ -18,6 +18,12 @@ const fuInventorySchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Please add qty']
     },
+    maximumLevel:{
+        type:Number
+    },
+    reorderLevel:{
+        type:Number
+    },
     createdAt: {
         type: Date,
         default: Date.now

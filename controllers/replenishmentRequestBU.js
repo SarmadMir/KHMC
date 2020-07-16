@@ -59,7 +59,7 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     {
       const wh = await WHInventory.findOne({itemId:req.body.itemId}).populate('itemId')
       const item = await Item.findOne({_id:req.body.itemId})
-      if(wh.qty<(parseInt(req.body.requestedQty) + (fui.qty-fui.itemId.maximumLevel)))
+      if(wh.qty<(parseInt(req.body.requestedQty) + (fui.qty-fui.maximumLevel)))
       {
       st = "pending"
       st2 = "Cannot be fulfilled"
@@ -78,7 +78,7 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
         itemId:req.body.itemId,
         comments:'System generated Replenishment Request',
         currentQty:fui.qty,
-        requestedQty:fui.itemId.maximumLevel-fui.qty,
+        requestedQty:fui.maximumLevel-fui.qty,
         description:item.description,
         status: st,
         secondStatus:st2,
@@ -97,7 +97,7 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     var item2={
     itemId:req.body.itemId,
     currQty:wh.qty,
-    reqQty:wh.itemId.maximumLevel - (fui.itemId.maximumLevel-fui.qty),
+    reqQty:wh.maximumLevel - (fui.maximumLevel-fui.qty),
     comments:'System',
     name:item.name,
     description:item.description,
@@ -210,7 +210,7 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
     //      st = "pending"
     //      st2 = "Can be fulfilled"
     //     }
-    //     if(rr.qty<=rr.itemId.reorderLevel)
+    //     if(rr.qty<=rr.reorderLevel)
     //     {
     //         await ReplenishmentRequest.create({
     //             requestNo: uuidv4(),

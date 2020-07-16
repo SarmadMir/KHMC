@@ -182,10 +182,10 @@ cron.schedule('* * * * *', () => {
            }
          });
     var work = [];
-    for(let q=0; q<docs.length; q++)
+    for(let q=0; q<abc.length; q++)
     {
       work.push(
-        {id:docs[q]._id, status:"not recieved"}
+        {id:abc[q]._id, status:"not recieved"}
       )
     }
          MaterialRecievingModel.create({

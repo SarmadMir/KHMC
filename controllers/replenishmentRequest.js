@@ -60,7 +60,7 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
       var item={
           itemId:req.body.itemId,
           currQty:wh.qty,
-          reqQty:i.maximumLevel-wh.qty,
+          reqQty:wh.maximumLevel-wh.qty,
           comments:'System',
           name:i.name,
           description:i.description,

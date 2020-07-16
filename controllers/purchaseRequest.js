@@ -1,4 +1,4 @@
-const webpush = require("web-push");
+const notification = require('../components/notification')
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 const asyncHandler = require('../middleware/async');
@@ -6,16 +6,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const WarehouseInventory = require('../models/warehouseInventory');
 const PurchaseRequest = require('../models/purchaseRequest');
 const PurchaseRequestItems = require('../models/purchaseRequestItems');
-const Subscription = require('../models/subscriber')
-const StaffType = require('../models/staffType')
-const User = require('../models/user')
-const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
-const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
-webpush.setVapidDetails(
-  "mailto:hannanbutt1995@gmail.com",
-  publicVapidKey,
-  privateVapidKey
-);
+
 exports.getPurchaseRequests = asyncHandler(async (req, res) => {
   const purchaseRequest = await PurchaseRequest.find()
     .populate('item.itemId')
@@ -60,49 +51,7 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     department,
     orderType,
   });
-  const payload = JSON.stringify({ title: "Purchase Requested Generated",message:"Kindly check the request" });
-  const type = await StaffType.findOne({type:"Committe Member"})
-  const user = await User.find({staffTypeId:type._id})
-  for(var i = 0; i<user.length; i++ )
-  {
-  Subscription.find({user:user[i]._id}, (err, subscriptions) => {
-    if (err) {
-      console.error(`Error occurred while getting subscriptions`);
-      res.status(500).json({
-        error: 'Technical error occurred',
-      });
-    } else {
-      let parallelSubscriptionCalls = subscriptions.map((subscription) => {
-        return new Promise((resolve, reject) => {
-          const pushSubscription = {
-            endpoint: subscription.endpoint,
-            keys: {
-              p256dh: subscription.keys.p256dh,
-              auth: subscription.keys.auth,
-            },
-          };
-          const pushPayload = payload;
-          webpush
-            .sendNotification(pushSubscription, pushPayload)
-            .then((value) => {
-              resolve({
-                status: true,
-                endpoint: subscription.endpoint,
-                data: value,
-              });
-            })
-            .catch((err) => {
-              reject({
-                status: false,
-                endpoint: subscription.endpoint,
-                data: err,
-              });
-            });
-        });
-      });
-    }
-  });
-}
+  notification("Purchase Request Generated", "Kindly check the request", "Committe Member")
   const pr = await PurchaseRequest.find()
   .populate('itemId')
   .populate('vendorId');

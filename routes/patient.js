@@ -2,13 +2,14 @@ const express = require('express');
 const {
     getPatient,
     getPatientById,
+    getPatientBySIN,
     addPatient,
     deletePatient,
     updatePatient
 } = require('../controllers/patient');
 
 const router = express.Router();
-
+router.get('/getpatientbysin/:SIN', getPatientBySIN);
 router.get('/getpatient/:id', getPatientById);
 router.get('/getpatient', getPatient);
 router.post('/addpatient', addPatient);

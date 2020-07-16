@@ -49,6 +49,9 @@ const patientSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'insurance',
     },
+    SIN:{
+     type:String    
+    },
     coverageDetails:{
         type:String
     },
