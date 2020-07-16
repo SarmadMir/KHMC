@@ -90,6 +90,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
                     requesterName:'System',
                     department:'',
                     orderType:'',
+                    rr: replenishmentRequestId
                   });
         }}}
     res.status(200).json({ success: true});

@@ -110,7 +110,7 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
   }
 
   if (req.body.committeeStatus === 'approved') {
-    req.body.status = 'items_in_transit';
+    req.body.status = 'pending_reception';
     req.body.sentAt = Date.now();
     // Sending Email to Vendor
 
@@ -141,14 +141,14 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
          });
   }
   purchaseOrder = await PurchaseOrder.findOneAndUpdate({ _id: _id }, req.body,{new: true});
-  if(purchaseOrder.status === "items_in_transit")
+  if(purchaseOrder.status === "pending_reception")
   {
     const { prId} = req.body;
     await MaterialRecieving.create({
       prId,
       poId : purchaseOrder._id,
       vendorId : purchaseOrder.vendorId,
-      status : "items_in_transit"
+      status : "pending_reception"
   });
   }
   res.status(200).json({ success: true, data: purchaseOrder });

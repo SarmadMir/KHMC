@@ -49,7 +49,6 @@ exports.authorize = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id);
     const test = await StaffType.findById(req.user.staffTypeId)
-    console.log(test)
     if(test.type == "testing eligibility")
     {
       next();
@@ -66,7 +65,6 @@ exports.authorize = asyncHandler(async (req, res, next) => {
 // Grant access to specific roles
 exports.authorizeOld = (...roles) => {
   return (req, res, next) => {
-    console.log('role: ', req.headers.role, roles);
     if (!roles.includes(req.headers.role)) {
       return next(
         new ErrorResponse(
