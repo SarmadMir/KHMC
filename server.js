@@ -201,7 +201,7 @@ cron.schedule('*/10 * * * * *', () => {
     }
     for(let i = 0; i<docs.length; i++)
     {
-      pRequest.update({_id: docs[i]._id},  { $set: { committeeStatus: 'completed'} })
+      pRequest.update({_id: docs[i]._id},  { $set: { committeeStatus: 'approved'} })
     }
     });
   });
