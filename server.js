@@ -1,11 +1,11 @@
 const express = require('express');
 const asyncHandler = require('./middleware/async');
-const pOrderModel = require('./models/purchaseOrder')
-const MaterialRecievingModel = require('./models/materialReceiving')
+const pOrderModel = require('./models/purchaseOrder');
+const MaterialRecievingModel = require('./models/materialReceiving');
 const dotenv = require('dotenv');
 const bodyparser = require('body-parser');
-const http = require("http");
-const socketIO = require("socket.io");
+const http = require('http');
+const socketIO = require('socket.io');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment');
@@ -13,7 +13,9 @@ const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 var nodemailer = require('nodemailer');
-const db = require("monk")('mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority');
+const db = require('monk')(
+  'mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority'
+);
 dotenv.config({ path: './config/.env' });
 connectDB();
 var transporter = nodemailer.createTransport({
@@ -52,21 +54,21 @@ const materialReceiving = require('./routes/materialReceiving');
 const shippingTerm = require('./routes/shippingTerm');
 const accessLevel = require('./routes/accessLevel');
 const account = require('./routes/account');
-const replenishmentRequest = require('./routes/replenishmentRequest')
-const replenishmentRequestBU = require('./routes/replenishmentRequestBU')
-const internalReturnRequest = require('./routes/internalReturnRequest')
-const externalReturnRequest = require('./routes/externalReturnRequest')
-const subscriber = require('./routes/subscriber')
-const patient = require('./routes/patient')
-const insurance = require('./routes/insurance')
+const replenishmentRequest = require('./routes/replenishmentRequest');
+const replenishmentRequestBU = require('./routes/replenishmentRequestBU');
+const internalReturnRequest = require('./routes/internalReturnRequest');
+const externalReturnRequest = require('./routes/externalReturnRequest');
+const subscriber = require('./routes/subscriber');
+const patient = require('./routes/patient');
+const insurance = require('./routes/insurance');
 const app = express();
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 app.use(cors());
 
 // Auth routes
-const { protect } = require('./middleware/auth');
-app.use(protect);
+// const { protect } = require('./middleware/auth');
+// app.use(protect);
 
 // Mount routers
 app.use('/api/auth', auth);
@@ -108,7 +110,7 @@ app.use('/api/insurance', insurance);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
-const port = 4001
+const port = 4001;
 app.listen(
   PORT,
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
@@ -116,103 +118,126 @@ app.listen(
 const serverSocket = http.createServer(app);
 const io = socketIO(serverSocket);
 
-io.on("connection", socket => {
-  socket.on("disconnect", () => {
-      console.log("user disconnected");
-    });
+io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
   });
-const pRequest = db.get("purchaserequests");
-const pOrder = db.get("purchaseorders");
+});
+const pRequest = db.get('purchaserequests');
+const pOrder = db.get('purchaseorders');
 cron.schedule('*/10 * * * * *', () => {
   // cron.schedule('* 7 * * *', () => {
 
-  pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
+  pRequest
+    .find({ committeeStatus: 'approved', generated: 'System' })
+    .then((docs) => {
       var temp = [];
-      for (let i = 0; i<docs.length; i++)
-      {
-        temp.push(docs[i])
+      for (let i = 0; i < docs.length; i++) {
+        temp.push(docs[i]);
       }
-      while(temp.length >0)
-      {
-        var c= [];
-        var temp2 = temp[0]
-        if(temp2)
-        {
-        c = temp.filter((i)=> i.vendorId.toString() === temp2.vendorId.toString())
-      }
-       if(c.length>0)
-      {
-        var abc =[];
-               c.map(u=>{
-          abc.push(u._id)
-        })
-        pOrder.insert({
-        purchaseOrderNo: uuidv4(),
-        purchaseRequestId:abc,
-        generated:'System',
-        generatedBy:'System',
-        date:moment().toDate(),
-        vendorId:c[0].vendorId,
-        status: 'pending_reception',
-        committeeStatus: 'approved',
-        sentAt:moment().toDate(),
-        createdAt:moment().toDate(),
-        updatedAt:moment().toDate()
-      })  
-        pOrderModel.findOneAndUpdate({committeeStatus:'approved',generated:'System'},{ $set: { committeeStatus: "po_sent", status:"po_sent"}},{new:true}).populate({
-          path : 'purchaseRequestId',
-          populate: [{
-              path : 'item.itemId',
-              }]
-      }).populate('vendorId').then(function(data, err){
-      const vendorEmail = data.vendorId.contactEmail
-      var content = data.purchaseRequestId.reduce(function(a, b) {
-    return a + '<tr><td>' + b.item.itemId.itemCode + '</a></td><td>' + b.item.itemId.name + '</td><td>' + b.item.reqQty + '</td></tr>';
-     }, '');
-       var mailOptions = {
-           from: 'abdulhannan.itsolution@gmail.com',
-           to: vendorEmail,
-           subject: 'Request for items',
-           html: '<div><table><thead><tr><th>Item Code</th><th>Item Name</th><th>Quantity</th></tr></thead><tbody>' + 
-           content + '</tbody></table></div>'
-         };
-         transporter.sendMail(mailOptions, function(error, info){
-           if (error) {
-             console.log(error);
-           } else {
-             console.log('Email sent: ' + info.response);
-           }
-         });
-    var work = [];
-    for(let q=0; q<abc.length; q++)
-    {
-      work.push(
-        {id:abc[q]._id, status:"not recieved"}
-      )
-    }
-         MaterialRecievingModel.create({
-           prId : work,
-           poId : data._id,
-           vendorId : data.vendorId._id,
-           status : "pending_reception"
-       }).then(function(data, err){
-       })
-      })
-         temp = temp.filter((i)=>i.vendorId.toString()!=c[0].vendorId.toString())
+      while (temp.length > 0) {
+        var c = [];
+        var temp2 = temp[0];
+        if (temp2) {
+          c = temp.filter(
+            (i) => i.vendorId.toString() === temp2.vendorId.toString()
+          );
         }
-    }
-    for(let i = 0; i<docs.length; i++)
-    {
-      pRequest.update({_id: docs[i]._id},  { $set: { committeeStatus: 'completed'} })
-    }
+        if (c.length > 0) {
+          var abc = [];
+          c.map((u) => {
+            abc.push(u._id);
+          });
+          pOrder.insert({
+            purchaseOrderNo: uuidv4(),
+            purchaseRequestId: abc,
+            generated: 'System',
+            generatedBy: 'System',
+            date: moment().toDate(),
+            vendorId: c[0].vendorId,
+            status: 'pending_reception',
+            committeeStatus: 'approved',
+            sentAt: moment().toDate(),
+            createdAt: moment().toDate(),
+            updatedAt: moment().toDate(),
+          });
+          pOrderModel
+            .findOneAndUpdate(
+              { committeeStatus: 'approved', generated: 'System' },
+              { $set: { committeeStatus: 'po_sent', status: 'po_sent' } },
+              { new: true }
+            )
+            .populate({
+              path: 'purchaseRequestId',
+              populate: [
+                {
+                  path: 'item.itemId',
+                },
+              ],
+            })
+            .populate('vendorId')
+            .then(function (data, err) {
+              const vendorEmail = data.vendorId.contactEmail;
+              var content = data.purchaseRequestId.reduce(function (a, b) {
+                return (
+                  a +
+                  '<tr><td>' +
+                  b.item.itemId.itemCode +
+                  '</a></td><td>' +
+                  b.item.itemId.name +
+                  '</td><td>' +
+                  b.item.reqQty +
+                  '</td></tr>'
+                );
+              }, '');
+              var mailOptions = {
+                from: 'abdulhannan.itsolution@gmail.com',
+                to: vendorEmail,
+                subject: 'Request for items',
+                html:
+                  '<div><table><thead><tr><th>Item Code</th><th>Item Name</th><th>Quantity</th></tr></thead><tbody>' +
+                  content +
+                  '</tbody></table></div>',
+              };
+              transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log('Email sent: ' + info.response);
+                }
+              });
+              var work = [];
+              for (let q = 0; q < abc.length; q++) {
+                work.push({ id: abc[q]._id, status: 'not recieved' });
+              }
+              MaterialRecievingModel.create({
+                prId: work,
+                poId: data._id,
+                vendorId: data.vendorId._id,
+                status: 'pending_reception',
+              }).then(function (data, err) {});
+            });
+          temp = temp.filter(
+            (i) => i.vendorId.toString() != c[0].vendorId.toString()
+          );
+        }
+      }
+      for (let i = 0; i < docs.length; i++) {
+        pRequest.update(
+          { _id: docs[i]._id },
+          { $set: { committeeStatus: 'completed' } }
+        );
+      }
     });
-  });
+});
 
-  // Handle unhandled promise rejections
+// Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
   console.log(`Error: ${err.message}`);
   // Close server & exit process
   // server.close(() => process.exit(1));
 });
 global.globalVariable = { io: io };
-serverSocket.listen(port, () => console.log(`Socket is listening on port ${port}`));
+serverSocket.listen(port, () =>
+  console.log(`Socket is listening on port ${port}`)
+);
