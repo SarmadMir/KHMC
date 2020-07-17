@@ -123,8 +123,10 @@ io.on("connection", socket => {
   });
 const pRequest = db.get("purchaserequests");
 const pOrder = db.get("purchaseorders");
-cron.schedule('* * * * *', () => {
-   pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
+cron.schedule('*/10 * * * * *', () => {
+  // cron.schedule('* 7 * * *', () => {
+
+  pRequest.find({committeeStatus:'approved',generated:'System'}).then(docs => {
       var temp = [];
       for (let i = 0; i<docs.length; i++)
       {
@@ -151,7 +153,7 @@ cron.schedule('* * * * *', () => {
         generatedBy:'System',
         date:moment().toDate(),
         vendorId:c[0].vendorId,
-        status: 'items_in_transit',
+        status: 'pending_reception',
         committeeStatus: 'approved',
         sentAt:moment().toDate(),
         createdAt:moment().toDate(),
@@ -182,17 +184,17 @@ cron.schedule('* * * * *', () => {
            }
          });
     var work = [];
-    for(let q=0; q<docs.length; q++)
+    for(let q=0; q<abc.length; q++)
     {
       work.push(
-        {id:docs[q]._id, status:"not recieved"}
+        {id:abc[q]._id, status:"not recieved"}
       )
     }
          MaterialRecievingModel.create({
            prId : work,
            poId : data._id,
            vendorId : data.vendorId._id,
-           status : "items_in_transit"
+           status : "pending_reception"
        }).then(function(data, err){
        })
       })

@@ -9,9 +9,13 @@ exports.getPatientById = asyncHandler(async (req, res) => {
     const patient = await Patient.find({_id:req.params.id})
     res.status(200).json({ success: true, data: patient });
   });
+exports.getPatientBySIN = asyncHandler(async (req, res) => {
+  const patient = await Patient.find({SIN:req.params.SIN})
+  res.status(200).json({ success: true, data: patient });
+});
 exports.addPatient = asyncHandler(async (req, res) => {
   const { identificationNumber, title, firstName, lastName, dob, gender, phoneNumber, email, country, city, address,
-    insuranceNumber, insuranceId, coverageTerms, payment, otherDetails  } = req.body;
+    insuranceNumber, insuranceId, coverageTerms, payment, otherDetails,SIN  } = req.body;
   const patient = await Patient.create({
     identificationNumber,
     title,
@@ -23,6 +27,7 @@ exports.addPatient = asyncHandler(async (req, res) => {
     email,
     country,
     city,
+    SIN,
     address,
     otherDetails,
     insuranceNumber,

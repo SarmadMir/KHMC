@@ -65,13 +65,13 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
             if(fu && pr)
             {
              await ReplenishmentRequest.findOneAndUpdate({_id: replenishmentRequestId},{ $set: { status:req.body.replenishmentRequestStatus,secondStatus:req.body.replenishmentRequestStatus }},{new:true});
-            if(pr.qty<=pr.itemId.reorderLevel)
+            if(pr.qty<=pr.reorderLevel)
             {
             const j =await Item.findOne({_id:req.body.itemId}) 
             var item={
                 itemId:req.body.itemId,
                 currQty:pr.qty,
-                reqQty:pr.itemId.maximumLevel-pr.qty,
+                reqQty:pr.maximumLevel-pr.qty,
                 comments:'System',
                 name:j.name,
                 description:j.description,
@@ -90,6 +90,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
                     requesterName:'System',
                     department:'',
                     orderType:'',
+                    rr: replenishmentRequestId
                   });
         }}}
     res.status(200).json({ success: true});

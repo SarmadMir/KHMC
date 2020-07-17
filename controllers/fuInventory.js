@@ -21,14 +21,15 @@ exports.getFuInventoryByFU = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, data: fuInventory });
 });
 exports.addFuInventory = asyncHandler(async (req, res) => {
-    const { fuId, itemId, qty } = req.body;
+    const { fuId, itemId, qty, maximumLevel, reorderLevel } = req.body;
     const fuInventory = await FuInventory.create({
         uuid: uuidv4(),
         fuId,
         itemId,
-        qty
+        qty,
+        maximumLevel,
+        reorderLevel
     });
-
     res.status(200).json({ success: true, data: fuInventory });
 });
 
