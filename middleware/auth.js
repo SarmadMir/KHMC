@@ -2,14 +2,19 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
 const User = require('../models/user');
-const StaffType = require('../models/staffType')
+const StaffType = require('../models/staffType');
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
+  console.log('REQUEST URL', req.url);
   // Skip authentication when url 'login', 'logout', 'register'
-  if(req.url === '/api/auth/login' || req.url === '/api/auth/logout' || req.url === '/api/auth/register' ){
+  if (
+    req.url === '/api/auth/login' ||
+    req.url === '/api/auth/logout' ||
+    req.url === '/api/auth/register'
+  ) {
     return next();
-  } 
+  }
 
   if (
     req.headers.authorization &&
@@ -17,7 +22,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(' ')[1];
   }
- 
 
   if (!token) {
     return next(new ErrorResponse('Not authorized to access this route', 401));
@@ -48,15 +52,14 @@ exports.authorize = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id);
-    const test = await StaffType.findById(req.user.staffTypeId)
-    console.log(test)
-    if(test.type == "testing eligibility")
-    {
+    const test = await StaffType.findById(req.user.staffTypeId);
+    console.log(test);
+    if (test.type == 'testing eligibility') {
       next();
-    }
-     else
-    {
-      return next(new ErrorResponse('Not authorized to access this route', 401));      
+    } else {
+      return next(
+        new ErrorResponse('Not authorized to access this route', 401)
+      );
     }
   } catch (err) {
     return next(new ErrorResponse('Not authorized to access this route', 401));
