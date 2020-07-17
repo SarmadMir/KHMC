@@ -27,23 +27,26 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
     comments:{
         type: String
     },
-    itemId:{
-        type: mongoose.Schema.ObjectId,
-        ref: 'Item'
-    },
-    currentQty:{
-        type:Number
-    },
-    requestedQty:{
-        type:Number
-    },
+    item:[{
+        itemId:{
+            type: mongoose.Schema.ObjectId,
+            ref: 'Item'
+        },
+        currentQty:{
+            type:Number
+        },
+        requestedQty:{
+            type:Number
+        },
+        status: {
+            type: String
+        },
+        secondStatus:{
+            type:String
+        },
+    }],
+
     description:{
-        type:String
-    },
-    status: {
-        type: String
-    },
-    secondStatus:{
         type:String
     },
     commentNote:{

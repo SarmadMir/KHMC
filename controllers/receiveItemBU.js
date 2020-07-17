@@ -51,7 +51,11 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
     });
     if(req.body.replenishmentRequestStatus=="complete")
     { 
-        await ReplenishmentRequestBU.findOneAndUpdate({_id: replenishmentRequestId},{ $set: { status:req.body.replenishmentRequestStatus,secondStatus:req.body.replenishmentRequestStatus }},{new:true});
+        const rrId = await ReplenishmentRequestBU.findOne({_id: replenishmentRequestId})
+        for (let i=0; i<rrId.item.length; i++)
+        {
+            await ReplenishmentRequestBU.findOneAndUpdate({_id: replenishmentRequestId,'item[i].itemId':req.body.itemId},{ $set: { 'item[i].status':req.body.replenishmentRequestStatus,'item[i].secondStatus':req.body.replenishmentRequestStatus }},{new:true});
+        }
         const fUnit = await FunctionalUnit.findOne({_id:req.body.fuId})
         const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:fUnit._id})   
         var less = fu.qty-req.body.requestedQty
