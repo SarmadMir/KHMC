@@ -1,5 +1,5 @@
 const express = require('express');
-const asyncHandler = require('./middleware/async');
+const notification = require('./components/notification')
 const pOrderModel = require('./models/purchaseOrder')
 const MaterialRecievingModel = require('./models/materialReceiving')
 const dotenv = require('dotenv');
@@ -165,6 +165,7 @@ cron.schedule('*/10 * * * * *', () => {
               path : 'item.itemId',
               }]
       }).populate('vendorId').then(function(data, err){
+      notification("Purchase Order Generated", "Purchase Order Sent To Member", "FU Inventory Keeper")
       const vendorEmail = data.vendorId.contactEmail
       var content = data.purchaseRequestId.reduce(function(a, b) {
     return a + '<tr><td>' + b.item.itemId.itemCode + '</a></td><td>' + b.item.itemId.name + '</td><td>' + b.item.reqQty + '</td></tr>';
