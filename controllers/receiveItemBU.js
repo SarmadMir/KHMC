@@ -23,7 +23,9 @@ exports.getReceiveItemsBU = asyncHandler(async (req, res) => {
 exports.addReceiveItemBU = asyncHandler(async (req, res) => {
     const { itemId,currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
-        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,replenishmentRequestId,replenishmentRequestStatus,fuId } = req.body;
+        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,replenishmentRequestId,replenishmentRequestStatus,fuId,
+        replenishmentRequestItemId
+     } = req.body;
     await ReceiveItemBU.create({
         itemId,
         currentQty,
@@ -47,7 +49,8 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
         dateInvoice,
         dateReceived,
         notes,
-        replenishmentRequestId
+        replenishmentRequestId,
+        replenishmentRequestItemId
     });
     if(req.body.replenishmentRequestStatus=="complete")
     { 
