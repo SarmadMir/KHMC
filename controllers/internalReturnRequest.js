@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+const notification = require('../components/notification')
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { v4: uuidv4 } = require('uuid');
@@ -60,6 +61,7 @@ exports.addInternalReturnRequest = asyncHandler(async (req, res) => {
         status,
         replenishmentRequestBU,replenishmentRequestFU
     });
+    notification("Return Request", "Internal Return Request Created", "FU Internal Request Return Approval Member")
     res.status(200).json({ success: true });
 });
 
@@ -74,6 +76,8 @@ exports.updateInternalRequest = asyncHandler(async (req, res, next) => {
     }
     if(req.body.status=="approved")
     {
+        notification("Return Request", "Internal Return Request Approved", "FU Inventory Keeper")
+        notification("Return Request", "Internal Return Request Approved", "Warehouse Member")
         req.body.status="Item Returned to Warehouse";
         if((req.body.to=="Warehouse")&&(req.body.from=="FU"))
         {

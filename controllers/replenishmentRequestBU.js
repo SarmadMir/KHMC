@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+const notification = require ('../components/notification')
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { v4: uuidv4 } = require('uuid');
@@ -76,6 +77,8 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
       st = "pending"
       st2 = "Can be fulfilled"
       }
+      notification("Replenishment Request Generated", "New Replenishment Request Generated", "Warehouse Member")
+      notification("Replenishment Request Generated", "New Replenishment Request Generated", "FU Member")
       const rrS = await ReplenishmentRequest.create({
         requestNo: uuidv4(),
         generated:'System',
@@ -125,6 +128,19 @@ exports.updateReplenishmentRequestBU = asyncHandler(async (req, res, next) => {
     }
 
     replenishmentRequest = await ReplenishmentRequestBU.findOneAndUpdate({_id: _id}, req.body,{new:true});
+    for (let i = 0; i<req.body.item.length; i++)
+    {
+      if(req.body.item[i].status == "in_progress")     
+      {
+        notification("In progess", "Item in progress", "BU Member") 
+      }
+      else if (req.body.item[i].status == "Delivery in Progress")
+      {
+        notification("Delivery in progess", "Delivery of Item in progress", "BU Member") 
+      }
+    }
+
+
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
   exports.getCurrentItemQuantityBU = asyncHandler(async (req, res) => {

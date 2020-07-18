@@ -73,7 +73,7 @@ exports.addPurchaseOrder = asyncHandler(async (req, res) => {
     status,
     committeeStatus: 'to_do',
   });
-  notification("Purchase Order Generated", "Purchase Order Sent To Member", "FU Inventory Keeper")
+  notification("Purchase Order Generated", "Purchase Order Sent To Member", "Committe Member")
   const po = await PurchaseOrder.find()
   .populate('vendorId')
   .populate('purchaseRequestId');
@@ -106,6 +106,7 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
   }
 
   if (req.body.committeeStatus === 'approved') {
+    notification("Purchase Order", "Purchase Order Approved", "admin")
     req.body.status = 'pending_reception';
     req.body.sentAt = Date.now();
     // Sending Email to Vendor

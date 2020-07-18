@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+const notification = require('../components/notification')
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { v4: uuidv4 } = require('uuid');
@@ -106,6 +107,15 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
         );
     }
     replenishmentRequest = await ReplenishmentRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
+    if(req.body.status == "Fulfillment Initiated")
+    {
+        notification("Replenishment Request", "Replenishment Request Fulfillment Initiated", "FU Member")
+    }
+    if(req.body.status == "Delivery in Progress")
+    {
+        notification("Replenishment Request", "Delivery in Progress for Replenishment Request", "FU Member")
+    }
+
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
 
