@@ -60,7 +60,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
             {
                 const rReq = await ReplenishmentRequest.findOne({_id: replenishmentRequestId})
                 // Here cannot status update
-                await ReplenishmentRequestBU.findOneAndUpdate({_id: rReq.rrB}, { $set: {secondStatus:"Can be fulfilled"}})
+                await ReplenishmentRequestBU.findOneAndUpdate({_id: rReq.rrB, 'item.itemId':req.body.itemId}, { $set: {'item.$.secondStatus':"Can be fulfilled"}})
             } 
             if(fu && pr)
             {
