@@ -61,6 +61,9 @@ const PurchaseRequestSchema = new mongoose.Schema({
   requesterName: {
     type: String,
   },
+  rejectionReason:{
+    type:String
+  },
   department: {
     type: String,
   },

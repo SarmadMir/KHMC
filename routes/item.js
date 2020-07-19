@@ -8,7 +8,7 @@ const {
     getSearchedItems,
     addItem,
     deleteItem,
-    updateItem
+    updateItem,
 } = require('../controllers/item');
 
 const router = express.Router();
