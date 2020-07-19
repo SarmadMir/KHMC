@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+const notification = require('../components/notification')
 const { v4: uuidv4 } = require('uuid');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
@@ -23,7 +24,9 @@ exports.getReceiveItemsBU = asyncHandler(async (req, res) => {
 exports.addReceiveItemBU = asyncHandler(async (req, res) => {
     const { itemId,currentQty, requestedQty, receivedQty, bonusQty, batchNumber,lotNumber,
         expiryDate,unit, discount, unitDiscount, discountAmount, tax, taxAmount, finalUnitPrice, subTotal, 
-        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,replenishmentRequestId,replenishmentRequestStatus,fuId } = req.body;
+        discountAmount2,totalPrice, invoice, dateInvoice,dateReceived, notes,replenishmentRequestId,replenishmentRequestStatus,fuId,
+        replenishmentRequestItemId
+     } = req.body;
     await ReceiveItemBU.create({
         itemId,
         currentQty,
@@ -47,15 +50,20 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
         dateInvoice,
         dateReceived,
         notes,
-        replenishmentRequestId
+        replenishmentRequestId,
+        replenishmentRequestItemId
     });
     if(req.body.replenishmentRequestStatus=="complete")
     { 
         const rrId = await ReplenishmentRequestBU.findOne({_id: replenishmentRequestId})
+
         for (let i=0; i<rrId.item.length; i++)
         {
-            await ReplenishmentRequestBU.findOneAndUpdate({_id: replenishmentRequestId,'item[i].itemId':req.body.itemId},{ $set: { 'item[i].status':req.body.replenishmentRequestStatus,'item[i].secondStatus':req.body.replenishmentRequestStatus }},{new:true});
+        await ReplenishmentRequestBU.findOneAndUpdate({_id: replenishmentRequestId, 'item.itemId':req.body.itemId},
+        { $set: { 'item.$.status':req.body.replenishmentRequestStatus,'item.$.secondStatus':req.body.replenishmentRequestStatus }}
+        ,{new:true});      
         }
+        notification("Item Received", "Item is Received", "FU Member")
         const fUnit = await FunctionalUnit.findOne({_id:req.body.fuId})
         const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:fUnit._id})   
         var less = fu.qty-req.body.requestedQty
@@ -80,6 +88,8 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
         }
         if(fui.qty<=fui.reorderLevel)
         {
+        notification("Replenishment Request Generated", "New Replenishment Request Generated", "Warehouse Member")
+        notification("Replenishment Request Generated", "New Replenishment Request Generated", "FU Member")
            const rrS = await ReplenishmentRequest.create({
                 requestNo: uuidv4(),
                 generated:'System',
@@ -103,6 +113,7 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
                 department:'',
                 rrB:req.body.rrBUId
               });
+              
             if(st2 == "Cannot be fulfilled")
             {
       var item2={

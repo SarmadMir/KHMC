@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+const notification = require('../components/notification')
 const { v4: uuidv4 } = require('uuid');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
@@ -60,10 +61,11 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
             {
                 const rReq = await ReplenishmentRequest.findOne({_id: replenishmentRequestId})
                 // Here cannot status update
-                await ReplenishmentRequestBU.findOneAndUpdate({_id: rReq.rrB}, { $set: {secondStatus:"Can be fulfilled"}})
+                await ReplenishmentRequestBU.findOneAndUpdate({_id: rReq.rrB, 'item.itemId':req.body.itemId}, { $set: {'item.$.secondStatus':"Can be fulfilled"}})
             } 
             if(fu && pr)
             {
+             notification("Replenishment Request", "Replenishment Request Completed", "Warehouse Incharge")
              await ReplenishmentRequest.findOneAndUpdate({_id: replenishmentRequestId},{ $set: { status:req.body.replenishmentRequestStatus,secondStatus:req.body.replenishmentRequestStatus }},{new:true});
             if(pr.qty<=pr.reorderLevel)
             {

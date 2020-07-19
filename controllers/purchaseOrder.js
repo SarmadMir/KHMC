@@ -1,21 +1,12 @@
-const webpush = require("web-push");
 const { v4: uuidv4 } = require('uuid');
+const notification = require('../components/notification')
 var nodemailer = require('nodemailer');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Vendor = require('../models/vendor');
 const PurchaseOrder = require('../models/purchaseOrder');
 const MaterialRecieving = require('../models/materialReceiving');
-const StaffType = require('../models/staffType')
-const User = require('../models/user')
-const Subscription = require('../models/subscriber')
-const privateVapidKey = "s92YuYXxjJ38VQhRSuayTb9yjN_KnVjgKfbpsHOLpjc";
-const publicVapidKey = "BOHtR0qVVMIA-IJEru-PbIKodcux05OzVVIJoIBKQu3Sp1mjvGkjaT-1PIzkEwAiAk6OuSCZfNGsgYkJJjOyV7k"
-webpush.setVapidDetails(
-  "mailto:hannanbutt1995@gmail.com",
-  publicVapidKey,
-  privateVapidKey
-);
+
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -82,6 +73,11 @@ exports.addPurchaseOrder = asyncHandler(async (req, res) => {
     status,
     committeeStatus: 'to_do',
   });
+  notification("Purchase Order Generated", "Purchase Order Sent To Member", "Committe Member")
+  const po = await PurchaseOrder.find()
+  .populate('vendorId')
+  .populate('purchaseRequestId');
+  globalVariable.io.emit("get_data", po)
   res.status(200).json({ success: true, data: purchaseOrder });
 });
 
@@ -110,6 +106,7 @@ exports.updatePurchaseOrder = asyncHandler(async (req, res, next) => {
   }
 
   if (req.body.committeeStatus === 'approved') {
+    notification("Purchase Order", "Purchase Order Approved", "admin")
     req.body.status = 'pending_reception';
     req.body.sentAt = Date.now();
     // Sending Email to Vendor

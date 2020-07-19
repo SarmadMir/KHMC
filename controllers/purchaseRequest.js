@@ -87,6 +87,7 @@ exports.updatePurchaseRequest = asyncHandler(async (req, res, next) => {
 
   if (req.body.committeeStatus === 'approved') {
     req.body.status = 'in_progress';
+    notification("Purchase Request", "Purchase Request Approved", "admin")
   }
 
   purchaseRequest = await PurchaseRequest.findOneAndUpdate(

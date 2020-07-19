@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+const notification = require('../components/notification')
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { v4: uuidv4 } = require('uuid');
@@ -52,6 +53,7 @@ exports.addExternalReturnRequest = asyncHandler(async (req, res) => {
         status,
         prId
     });
+    notification("Return Request", "External Return Request Generated", "Warehouse Incharge")
     res.status(200).json({ success: true });
 });
 
@@ -64,6 +66,15 @@ exports.updateExternalRequest = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`External Return not found with id of ${_id}`, 404)
         );
     }
+    if(req.body.status == "approved")
+    {
+        notification("Return Request", "External Return Request Approved", "admin")
+    }
+    if(req.body.status == "reject")
+    {
+        notification("Return Request", "External Return Request Rejected", "admin")
+    }
+
     // if(req.body.status=="approved")
     // {
     //     req.body.status="Item Returned to Warehouse";
