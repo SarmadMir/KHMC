@@ -121,7 +121,7 @@ app.listen(
 );
 const serverSocket = http.createServer(app);
 const io = socketIO(serverSocket);
-
+io.origins('*:*');
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected');
