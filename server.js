@@ -13,13 +13,13 @@ const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 var nodemailer = require('nodemailer');
-const db = require('monk')(
-  'mongodb+srv://khmc-staging:khmc-staging@khmc-staging.rvomo.mongodb.net/staging?retryWrites=true&w=majority'
-);
-
 // const db = require('monk')(
-//   'mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority'
+//   'mongodb+srv://khmc-staging:khmc-staging@khmc-staging.rvomo.mongodb.net/staging?retryWrites=true&w=majority'
 // );
+
+const db = require('monk')(
+  'mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority'
+);
 dotenv.config({ path: './config/.env' });
 connectDB();
 var transporter = nodemailer.createTransport({
@@ -65,6 +65,9 @@ const externalReturnRequest = require('./routes/externalReturnRequest');
 const subscriber = require('./routes/subscriber');
 const patient = require('./routes/patient');
 const insurance = require('./routes/insurance');
+const radiologyService = require('./routes/radiologyService');
+const laboratoryService = require('./routes/laboratoryService');
+const surgeryService = require('./routes/surgeryService');
 const app = express();
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
@@ -111,6 +114,9 @@ app.use('/api/externalreturnrequest', externalReturnRequest);
 app.use('/api/subscriber', subscriber);
 app.use('/api/patient', patient);
 app.use('/api/insurance', insurance);
+app.use('/api/radiologyservice', radiologyService);
+app.use('/api/laboratoryservice', laboratoryService);
+app.use('/api/surgeryservice', surgeryService);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
