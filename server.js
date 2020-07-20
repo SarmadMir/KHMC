@@ -178,7 +178,6 @@ cron.schedule('*/10 * * * * *', () => {
               path : 'item.itemId',
               }]
       }).populate('vendorId').then(function(data, err){
-      notification("Purchase Order", "A new Purchase Order "+data.purchaseOrderNo +" has been generated at "+data.createdAt+" by System", "admin")
       const vendorEmail = data.vendorId.contactEmail
       var content = data.purchaseRequestId.reduce(function(a, b) {
     return a + '<tr><td>' + b.item.itemId.itemCode + '</a></td><td>' + b.item.itemId.name + '</td><td>' + b.item.reqQty + '</td></tr>';
