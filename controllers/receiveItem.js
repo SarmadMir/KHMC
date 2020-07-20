@@ -6,6 +6,7 @@ const ExternalReturnRequest = require('../models/externalReturnRequest');
 const ReceiveItem = require('../models/receiveItem');
 const MaterialReceiving = require('../models/materialReceiving');
 const PurchaseRequest = require('../models/purchaseRequest');
+const PurchaseOrder = require('../models/purchaseOrder');
 const Account = require('../models/account');
 const moment = require('moment');
 exports.getReceiveItems = asyncHandler(async (req, res) => {
@@ -25,7 +26,7 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
           var isafter = moment(req.body.dateReceived).isAfter(req.body.expiryDate);
             if (isafter)
             {
-                await ExternalReturnRequest.create({
+               const err =  await ExternalReturnRequest.create({
                     returnRequestNo: uuidv4(),
                     generatedBy:"System",
                     generated:"System",
@@ -39,7 +40,9 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
                     status:"approved",
                     prId:req.body.prId
                 })
-                notification("Item Date Expired", "Kindly check date of the item", "Warehouse Incharge")
+                notification("Item Date Expired ", "A new Return Request "+err.returnRequestNo+" has been generated at "+err.createdAt+" by System", "Warehouse Incharge")
+                const send = await ExternalReturnRequest.find().populate('itemId');
+                globalVariable.io.emit("get_data", send)
             }
             if(!isafter){
         if(req.body.receivedQty>req.body.requestedQty)
@@ -83,7 +86,9 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
             status:"approved",
             prId:req.body.prId
         })
-        notification("Extra Quantity Returned", "Kindly check quantity of the item", "Warehouse Incharge")
+        notification("Extra Quantity Returned", "A new Return Request "+err.returnRequestNo+" has been generated at "+err.createdAt+" by System", "Warehouse Incharge")
+        const send = await ExternalReturnRequest.find().populate('itemId');
+        globalVariable.io.emit("get_data", send)
         }
         else{
             await ReceiveItem.create({
@@ -115,7 +120,8 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
     
     await PurchaseRequest.findOneAndUpdate({'_id': prId},{ $set: { status: 'pending_approval_from_accounts' }},{new: true});
     const mat = await MaterialReceiving.findOneAndUpdate({'_id': materialId,'prId.id':prId},{ $set: { 'prId.$.status': req.body.status }},{new: true});
-   var count = 0;
+    const poNum = await PurchaseOrder.findOne({_id:mat.poId});
+    var count = 0;
     for(let i = 0; i<mat.prId.length; i++)
     {
         if(mat.prId[i].status=="received"||mat.prId[i].status=="rejected"){
@@ -124,12 +130,12 @@ exports.addReceiveItem = asyncHandler(async (req, res) => {
     }
     if(count == mat.prId.length)
     {
-        await Account.create({
+        const acc = await Account.create({
             mrId:materialId,
             status:"pending_approval_from_accounts",
             vendorId:vendorId
         })
-        notification("Account Approval Needed", "Kindly check the order", "Accounts Member")
+        notification("Account Approval Needed", "Purchase Order "+poNum.purchaseOrderNo+" has been received by the Inventory Keeper at "+acc.createdAt+" pending approval", "Accounts Member")
     }
     const ac = await Account.find().populate({
       path : 'mrId',

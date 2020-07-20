@@ -63,7 +63,7 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
         { $set: { 'item.$.status':req.body.replenishmentRequestStatus,'item.$.secondStatus':req.body.replenishmentRequestStatus }}
         ,{new:true});      
         }
-        notification("Item Received", "Item is Received", "FU Member")
+        notification("Item Received", "Item Received against Professional Order "+rrId.requestNo, "FU Member")
         const fUnit = await FunctionalUnit.findOne({_id:req.body.fuId})
         const fu = await FUInventory.findOne({itemId: req.body.itemId,fuId:fUnit._id})   
         var less = fu.qty-req.body.requestedQty
@@ -125,7 +125,7 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
           description:item.description,
           itemCode:item.itemCode
       }
-          await PurchaseRequest.create({
+          const purchase = await PurchaseRequest.create({
               requestNo: uuidv4(),
               generated:'System',
               generatedBy:'System',
@@ -140,6 +140,7 @@ exports.addReceiveItemBU = asyncHandler(async (req, res) => {
               orderType:'',
               rr:rrS._id
             });
+            notification("Purchase Request", "A new Purchase Request "+purchase.requestNo+" has been generated at "+purchase.createdAt, "admin")
             }
             }}
       res.status(200).json({ success: true});

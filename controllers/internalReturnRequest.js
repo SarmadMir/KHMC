@@ -42,7 +42,7 @@ exports.deleteInternalReturnRequests = asyncHandler(async (req, res, next) => {
 exports.addInternalReturnRequest = asyncHandler(async (req, res) => {
     const { generatedBy,dateGenerated,expiryDate,to,from,fuId,buId,itemId,currentQty,reason,returnedQty,
            reasonDetail,description,status,damageReport,replenishmentRequestBU,replenishmentRequestFU} = req.body;
-    await InternalReturnRequest.create({
+   const irr = await InternalReturnRequest.create({
         returnRequestNo: uuidv4(),
         generatedBy,
         dateGenerated,
@@ -61,7 +61,9 @@ exports.addInternalReturnRequest = asyncHandler(async (req, res) => {
         status,
         replenishmentRequestBU,replenishmentRequestFU
     });
-    notification("Return Request", "Internal Return Request Created", "FU Internal Request Return Approval Member")
+    notification("Return Request", "A new Return Request "+irr.returnRequestNo+" has been generated at "+irr.createdAt, "FU Internal Request Return Approval Member")
+    const send = await InternalReturnRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId').populate('replenishmentRequestFU');
+    globalVariable.io.emit("get_data", send)
     res.status(200).json({ success: true });
 });
 
@@ -76,8 +78,10 @@ exports.updateInternalRequest = asyncHandler(async (req, res, next) => {
     }
     if(req.body.status=="approved")
     {
-        notification("Return Request", "Internal Return Request Approved", "FU Inventory Keeper")
-        notification("Return Request", "Internal Return Request Approved", "Warehouse Member")
+        notification("Return Request", "The Return Request "+ req.body.returnRequestNo+" has been approved at "+req.body.updatedAt, "FU Inventory Keeper")
+        notification("Return Request", "The Return Request "+ req.body.returnRequestNo+" has been approved at "+req.body.updatedAt, "Warehouse Member")
+        const send = await InternalReturnRequest.find({to:"Warehouse",from:"FU"}).populate('fuId').populate('itemId').populate('replenishmentRequestFU');
+        globalVariable.io.emit("get_data", send)
         req.body.status="Item Returned to Warehouse";
         if((req.body.to=="Warehouse")&&(req.body.from=="FU"))
         {

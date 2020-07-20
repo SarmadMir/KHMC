@@ -55,6 +55,8 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
         orderType,
         department
     });
+    notification("Replenishment Request", "A new Manual replenishment request has been generated at "+rrS.createdAt, "Warehouse Member")
+    notification("Replenishment Request", "A new Manual replenishment request has been generated at "+rrS.createdAt, "FU Member")
     if(req.body.secondStatus == 'Cannot be fulfilled')
     {
       const i =await Item.findOne({_id:req.body.itemId}) 
@@ -67,7 +69,7 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
           description:i.description,
           itemCode:i.itemCode
       }
-          await PurchaseRequest.create({
+          const purchase = await PurchaseRequest.create({
               requestNo: uuidv4(),
               generated:'System',
               generatedBy:'System',
@@ -82,6 +84,7 @@ exports.addReplenishmentRequest = asyncHandler(async (req, res) => {
               orderType:'System',
               rr:rrS._id
             });
+            notification("Purchase Request", "A new Purchase Request "+purchase.requestNo+" has been generated at "+purchase.createdAt, "admin")
     }
     res.status(200).json({ success: true });
 });
@@ -109,11 +112,11 @@ exports.updateReplenishmentRequest = asyncHandler(async (req, res, next) => {
     replenishmentRequest = await ReplenishmentRequest.findOneAndUpdate({_id: _id}, req.body,{new:true});
     if(req.body.status == "Fulfillment Initiated")
     {
-        notification("Replenishment Request", "Replenishment Request Fulfillment Initiated", "FU Member")
+        notification("Replenishment Request", "Replenishment Request "+replenishmentRequest.requestNo+" has been updated to Fulfillment Initiated by the Inventory Keeper at "+replenishmentRequest.updatedAt, "FU Member")
     }
     if(req.body.status == "Delivery in Progress")
     {
-        notification("Replenishment Request", "Delivery in Progress for Replenishment Request", "FU Member")
+        notification("Replenishment Request", "Replenishment Request "+replenishmentRequest.requestNo+" has been updated to Delivery in Progress by the Inventory Keeper at "+replenishmentRequest.updatedAt, "FU Member")
     }
 
     res.status(200).json({ success: true, data: replenishmentRequest });

@@ -65,7 +65,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
             } 
             if(fu && pr)
             {
-             notification("Replenishment Request", "Replenishment Request Completed", "Warehouse Incharge")
+             notification("Replenishment Request", "Replenishment Request "+rReq.requestNo+" has been completed at "+req.body.updatedAt, "Warehouse Incharge")
              await ReplenishmentRequest.findOneAndUpdate({_id: replenishmentRequestId},{ $set: { status:req.body.replenishmentRequestStatus,secondStatus:req.body.replenishmentRequestStatus }},{new:true});
             if(pr.qty<=pr.reorderLevel)
             {
@@ -79,7 +79,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
                 description:j.description,
                 itemCode:j.itemCode
             }
-                await PurchaseRequest.create({
+              const purchaseRequest = await PurchaseRequest.create({
                     requestNo: uuidv4(),
                     generated:'System',
                     generatedBy:'System',
@@ -94,6 +94,7 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
                     orderType:'',
                     rr: replenishmentRequestId
                   });
+                  notification("Purchase Request", "A new Purchase Request "+purchaseRequest.requestNo+"has been generated at "+purchaseRequest.createdAt, "Committe Member")         
         }}}
     res.status(200).json({ success: true});
 });

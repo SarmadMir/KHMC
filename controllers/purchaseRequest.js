@@ -51,7 +51,7 @@ exports.addPurchaseRequest = asyncHandler(async (req, res) => {
     department,
     orderType,
   });
-  notification("Purchase Request Generated", "Kindly check the request", "Committe Member")
+  notification("Purchase Request", "A new Purchase Request "+purchaseRequest.requestNo+"has been generated at "+purchaseRequest.createdAt, "Committe Member")
   const pr = await PurchaseRequest.find()
   .populate('itemId')
   .populate('vendorId');
@@ -87,7 +87,11 @@ exports.updatePurchaseRequest = asyncHandler(async (req, res, next) => {
 
   if (req.body.committeeStatus === 'approved') {
     req.body.status = 'in_progress';
-    notification("Purchase Request", "Purchase Request Approved", "admin")
+    notification("Purchase Request", "A new Purchase Request "+req.body.requestNo+"has been generated at "+req.body.updatedAt, "admin")
+    const pr = await PurchaseRequest.find()
+    .populate('itemId')
+    .populate('vendorId');
+    globalVariable.io.emit("get_data", pr)
   }
 
   purchaseRequest = await PurchaseRequest.findOneAndUpdate(
