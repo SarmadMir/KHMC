@@ -62,10 +62,10 @@ exports.addReceiveItemFU = asyncHandler(async (req, res) => {
                 const rReq = await ReplenishmentRequest.findOne({_id: replenishmentRequestId})
                 // Here cannot status update
                 await ReplenishmentRequestBU.findOneAndUpdate({_id: rReq.rrB, 'item.itemId':req.body.itemId}, { $set: {'item.$.secondStatus':"Can be fulfilled"}})
+                notification("Replenishment Request", "Replenishment Request "+rReq.requestNo+" has been completed at "+req.body.updatedAt, "Warehouse Incharge")
             } 
             if(fu && pr)
             {
-             notification("Replenishment Request", "Replenishment Request "+rReq.requestNo+" has been completed at "+req.body.updatedAt, "Warehouse Incharge")
              await ReplenishmentRequest.findOneAndUpdate({_id: replenishmentRequestId},{ $set: { status:req.body.replenishmentRequestStatus,secondStatus:req.body.replenishmentRequestStatus }},{new:true});
             if(pr.qty<=pr.reorderLevel)
             {
