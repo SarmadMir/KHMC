@@ -61,6 +61,8 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
         // secondStatus:req.body.secondStatus,
     });
     notification("Professional Order", "A new Professional Order has been generated at "+rrBU.createdAt, "Committe Member")
+    const send = await ReplenishmentRequestBU.find().populate('buId').populate('fuId').populate('item.itemId');
+    globalVariable.io.emit("get_data", send)
     for(let i=0; i<req.body.item.length; i++)
     {
     if(req.body.item[i].secondStatus == "Cannot be fulfilled")
