@@ -18,13 +18,14 @@ exports.getStaffType = asyncHandler(async (req, res) => {
 });
 
 exports.addStaffType = asyncHandler(async (req, res) => {
-  const { type, description, status, systemAdminId, accessLevelId } = req.body;
+  const { type, description, status, systemAdminId } = req.body;
   const staffType = await StaffType.create({
     type,
     description,
     accessLevelId,
     status,
-    systemAdminId,
+   systemAdminId,
+  
   });
 
   res.status(200).json({ success: true, data: staffType });

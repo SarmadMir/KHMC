@@ -52,6 +52,8 @@ const staffSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add address'],
     },
+  staffPermission : { type : Array , "default" : [] },
+  
     systemAdminId: {
       type: mongoose.Schema.ObjectId,
       ref: 'systemAdmin',

@@ -14,8 +14,8 @@ exports.getStaff = asyncHandler(async (req, res) => {
   const systemAdmin = await SystemAdmin.find();
   const data = {
     staff,
-    staffType,
-    systemAdmin,
+    // staffType,
+    // systemAdmin,
   };
   res.status(200).json({ success: true, data: data });
 });
@@ -35,6 +35,7 @@ exports.addStaff = asyncHandler(async (req, res) => {
     address,
     systemAdminId,
     status,
+    staffPermission,
   } = req.body;
 
   const staff = await Staff.create({
@@ -47,7 +48,7 @@ exports.addStaff = asyncHandler(async (req, res) => {
     email,
     password,
     gender,
-    dob,
+    dob,staffPermission,
     address,
     systemAdminId,
     status,

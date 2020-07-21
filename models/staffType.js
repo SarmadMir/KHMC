@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 const staffTypeSchema = new mongoose.Schema(
@@ -18,7 +19,8 @@ const staffTypeSchema = new mongoose.Schema(
     status: {
       type: String,
       required: [true, 'Please add status'],
-    },
+    }
+  ,
     systemAdminId: {
       type: mongoose.Schema.ObjectId,
       ref: 'systemAdmin',
