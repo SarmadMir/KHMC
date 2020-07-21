@@ -27,6 +27,9 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
     comments:{
         type: String
     },
+    orderType:{
+        type:String
+    },
     item:[{
         itemId:{
             type: mongoose.Schema.ObjectId,
