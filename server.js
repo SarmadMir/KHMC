@@ -13,13 +13,13 @@ const cron = require('node-cron');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 var nodemailer = require('nodemailer');
-const db = require('monk')(
-  'mongodb+srv://khmc-staging:khmc-staging@khmc-staging.rvomo.mongodb.net/staging?retryWrites=true&w=majority'
-);
-
 // const db = require('monk')(
-//   'mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority'
+//   'mongodb+srv://khmc-staging:khmc-staging@khmc-staging.rvomo.mongodb.net/staging?retryWrites=true&w=majority'
 // );
+
+const db = require('monk')(
+  'mongodb+srv://khmc:khmc12345@khmc-r3oxo.mongodb.net/test?retryWrites=true&w=majority'
+);
 dotenv.config({ path: './config/.env' });
 connectDB();
 var transporter = nodemailer.createTransport({
@@ -137,7 +137,6 @@ const pRequest = db.get('purchaserequests');
 const pOrder = db.get('purchaseorders');
 cron.schedule('*/10 * * * * *', () => {
   // cron.schedule('* 7 * * *', () => {
-
   pRequest
     .find({ committeeStatus: 'approved', generated: 'System' })
     .then((docs) => {
@@ -178,6 +177,8 @@ cron.schedule('*/10 * * * * *', () => {
               path : 'item.itemId',
               }]
       }).populate('vendorId').then(function(data, err){
+
+      notification("Purchase Order", "A new Purchase Order "+data.purchaseOrderNo+" has been generated at "+data.createdAt+" by System", "admin")
       const vendorEmail = data.vendorId.contactEmail
       var content = data.purchaseRequestId.reduce(function(a, b) {
     return a + '<tr><td>' + b.item.itemId.itemCode + '</a></td><td>' + b.item.itemId.name + '</td><td>' + b.item.reqQty + '</td></tr>';
