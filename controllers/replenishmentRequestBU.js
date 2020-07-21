@@ -18,10 +18,22 @@ exports.getReplenishmentRequestsBU = asyncHandler(async (req, res) => {
     const replenishmentRequest = await ReplenishmentRequestBU.find().populate('buId').populate('fuId').populate('item.itemId');    
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
+
+exports.getReplenishmentRequestsBUP = asyncHandler(async (req, res) => {
+  const replenishmentRequest = await ReplenishmentRequestBU.find({orderFor:"Pharmaceutical"}).populate('buId').populate('fuId').populate('item.itemId');    
+  res.status(200).json({ success: true, data: replenishmentRequest });
+});
+
+exports.getReplenishmentRequestsBUNP = asyncHandler(async (req, res) => {
+  const replenishmentRequest = await ReplenishmentRequestBU.find({orderFor:"Non Pharmaceutical"}).populate('buId').populate('fuId').populate('item.itemId');    
+  res.status(200).json({ success: true, data: replenishmentRequest });
+});
+
 exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
     const replenishmentRequest = await ReplenishmentRequestBU.findOne({_id:req.body._id}).populate('buId').populate('fuId').populate('itemId');
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
+
 exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
     const { generated,generatedBy,dateGenerated,buId,comments,item,currentQty,requestedQty,orderFor,
            description,patientReferenceNo, requesterName, department, orderType, reason} = req.body;
