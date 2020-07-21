@@ -21,39 +21,39 @@ exports.getItems = asyncHandler(async (req, res) => {
   const vendors = await Vendor.find();
   const functionalUnit = await FunctionalUnit.find();
   const classes = [
-    { key: 'medical', value: 'Medical' },
-    { key: 'non_medical', value: 'Non Medical' },
+    { key: 'pharmaceutical', value: 'Pharmaceutical' },
+    { key: 'non_pharmaceutical', value: 'Non Pharmaceutical' },
   ];
   const subClasses = [
     {
       key: 'medical_supplies',
       value: 'Medical Supplies & Instruments',
-      parent: 'medical',
+      parent: 'pharmaceutical',
     },
-    { key: 'medicine', value: 'Medicine', parent: 'medical' },
+    { key: 'medicine', value: 'Medicine', parent: 'pharmaceutical' },
     {
       key: 'laboratory_supplies',
       value: 'Laboratory Supplies',
-      parent: 'medical',
+      parent: 'pharmaceutical',
     },
     {
       key: 'radiology_medicine',
       value: 'Radiology Medicine & Supplies',
-      parent: 'medical',
+      parent: 'pharmaceutical',
     },
-    { key: 'food_beverage', value: 'Food & Beverage', parent: 'non_medical' },
-    { key: 'food_supplies', value: 'Food Supplies', parent: 'non_medical' },
+    { key: 'food_beverage', value: 'Food & Beverage', parent: 'non_pharmaceutical' },
+    { key: 'food_supplies', value: 'Food Supplies', parent: 'non_pharmaceutical' },
     {
       key: 'housekeeping_supplies',
       value: 'Housekeeping Supplies',
-      parent: 'non_medical',
+      parent: 'non_pharmaceutical',
     },
-    { key: 'maintenance', value: 'Maintenance', parent: 'non_medical' },
-    { key: 'textile', value: 'Textile', parent: 'non_medical' },
+    { key: 'maintenance', value: 'Maintenance', parent: 'non_pharmaceutical' },
+    { key: 'textile', value: 'Textile', parent: 'non_pharmaceutical' },
     {
       key: 'office_stationary_supplies',
       value: 'Office & Stationary Supplies',
-      parent: 'non_medical',
+      parent: 'non_pharmaceutical',
     },
   ];
   const grandSubClasses = [
