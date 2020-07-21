@@ -213,7 +213,24 @@ exports.getSearchedItems = asyncHandler(async (req, res) => {
   };
   res.status(200).json({ success: true, data: data });
 });
-
+exports.getSearchedItemsP = asyncHandler(async (req, res) => {
+  const items = await Item.find({
+    $or: [{ name: {$regex: req.params.keyword, $options: 'i'} }, { itemCode: {$regex: req.params.keyword, $options: 'i'} }],cls:'pharmaceutical'
+  });
+  const data = {
+    items,
+  };
+  res.status(200).json({ success: true, data: data });
+});
+exports.getSearchedItemsNP = asyncHandler(async (req, res) => {
+  const items = await Item.find({
+    $or: [{ name: {$regex: req.params.keyword, $options: 'i'} }, { itemCode: {$regex: req.params.keyword, $options: 'i'} }],cls:'non_pharmaceutical'
+  });
+  const data = {
+    items,
+  };
+  res.status(200).json({ success: true, data: data });
+});
 exports.addItem = asyncHandler(async (req, res, next) => {
   const {
     name,

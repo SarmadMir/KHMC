@@ -6,6 +6,8 @@ const {
     getItem,
     getItems,
     getSearchedItems,
+    getSearchedItemsP,
+    getSearchedItemsNP,
     addItem,
     deleteItem,
     updateItem,
@@ -15,6 +17,8 @@ const router = express.Router();
 router.get('/getitem/:_id', getItem);
 router.get('/getitems', getItems);
 router.get('/getsearcheditems/:keyword', getSearchedItems);
+router.get('/getsearcheditemsp/:keyword', getSearchedItemsP);
+router.get('/getsearcheditemsnp/:keyword', getSearchedItemsNP);
 router.post('/additem', validateParams([
     {
         param_key: 'name',

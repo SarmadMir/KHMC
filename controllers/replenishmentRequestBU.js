@@ -23,7 +23,7 @@ exports.getReplenishmentRequestsByIdBU = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, data: replenishmentRequest });
 });
 exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
-    const { generated,generatedBy,dateGenerated,buId,comments,item,currentQty,requestedQty,orderType,
+    const { generated,generatedBy,dateGenerated,buId,comments,item,currentQty,requestedQty,orderFor,
            description,patientReferenceNo, requesterName, department, orderType, reason} = req.body;
           //  status,secondStatus
            const func = await FunctionalUnit.findOne({_id:req.body.fuId})
@@ -54,7 +54,7 @@ exports.addReplenishmentRequestBU = asyncHandler(async (req, res) => {
         description,
         // status,
         requesterName,
-        orderType,
+        orderFor,
         department,
         reason,
         patientReferenceNo,

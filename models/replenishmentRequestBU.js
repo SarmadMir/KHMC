@@ -27,7 +27,7 @@ const replenishmentRequestBUSchema = new mongoose.Schema({
     comments:{
         type: String
     },
-    orderType:{
+    orderFor:{
         type:String
     },
     item:[{
