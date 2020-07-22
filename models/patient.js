@@ -54,6 +54,15 @@ const patientSchema = new mongoose.Schema({
     amountReceived:{
         type:Number
     },
+    bankName:{
+        type:String
+    },
+    depositorName:{
+        type:String
+    },
+    depositSlip:{
+        type:String
+    },
     insuranceId:{ //Vendor
         type: mongoose.Schema.ObjectId,
         ref: 'insurance',
