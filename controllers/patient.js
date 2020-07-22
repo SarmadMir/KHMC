@@ -14,23 +14,26 @@ exports.getPatientBySIN = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: patient });
 });
 exports.addPatient = asyncHandler(async (req, res) => {
-  const { identificationNumber, title, firstName, lastName, dob, gender, phoneNumber, email, country, city, address,
-    insuranceNumber, insuranceId, coverageTerms, payment, otherDetails,SIN  } = req.body;
+  const { profileNo, SIN, title, firstName, lastName, gender, dob, phoneNumber, email, country, city, address,
+    otherDetails, paymentMethod, depositAmount, amountReceived, insuranceId, coverageDetails,
+    coverageTerms, payment } = req.body;
   const patient = await Patient.create({
-    identificationNumber,
+    profileNo,
+    SIN,
     title,
     firstName,
     lastName,
-    dob,
     gender,
+    dob,
     phoneNumber,
     email,
     country,
     city,
-    SIN,
     address,
     otherDetails,
-    insuranceNumber,
+    paymentMethod,
+    depositAmount,
+    amountReceived,
     insuranceId,
     coverageDetails,
     coverageTerms,

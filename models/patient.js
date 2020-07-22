@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 
 const patientSchema = new mongoose.Schema({
-    identificationNumber: {
-        type: String
+    profileNo:{
+        type:String
+    },
+    SIN:{
+        type:String
     },
     title:{
         type:String
@@ -13,12 +16,12 @@ const patientSchema = new mongoose.Schema({
     lastName: {
         type: String
     },
-    dob: {
-        type: Date,
-    },
     gender: {
         type: String,
     },
+    dob: {
+        type: Date,
+    },    
     phoneNumber: {
         type: String,
     },
@@ -42,15 +45,18 @@ const patientSchema = new mongoose.Schema({
     otherDetails: {
         type: String
     },
-    insuranceNumber:{
+    paymentMethod:{
         type:String
     },
-    insuranceId:{
+    depositAmount:{
+        type:Number
+    },
+    amountReceived:{
+        type:Number
+    },
+    insuranceId:{ //Vendor
         type: mongoose.Schema.ObjectId,
         ref: 'insurance',
-    },
-    SIN:{
-     type:String    
     },
     coverageDetails:{
         type:String
